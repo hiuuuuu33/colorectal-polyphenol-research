@@ -1,5 +1,4 @@
-# Rebuild the submitted docking-score table from the archived workbook.
-# Usage from the repository root: Rscript scripts/R/04_docking.R
+# Read the archived docking workbook and search grids; save Table 5 and score-comparison plots.
 
 run_docking <- function(root = ".") {
   root <- normalizePath(root, mustWork = TRUE)
@@ -80,7 +79,6 @@ run_docking <- function(root = ".") {
   grid_path <- file.path(result_dir, "archived_grid_parameters.csv")
   utils::write.csv(grids, grid_path, row.names = FALSE)
 
-  # This new summary figure is generated from scores; submitted Figure 9 is retained separately.
   long <- rbind(
     data.frame(records, receptor = "ADH1C / 1HT0", score = records$ADH1C_1HT0),
     data.frame(records, receptor = "CXCL8-Fab assembly / 6WZM",

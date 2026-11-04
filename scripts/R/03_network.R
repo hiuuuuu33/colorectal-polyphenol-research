@@ -1,5 +1,4 @@
-# Redraw manuscript Figures 5, 6 and reconstructed Figure 8 from frozen inputs.
-# Run network_analysis.py once before this script if results are absent.
+# Plot protein centrality, compound proximity, and target networks for Figures 5, 6, and 8.
 
 run_network_figures <- function(project_root = ".") {
   packages <- c("ggplot2", "ggrepel")

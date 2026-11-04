@@ -1,4 +1,4 @@
-"""Build a figure-7 companion from cached PubChem compound depictions."""
+"""Build Figure 7 from cached PubChem structures for the top ten compounds."""
 from pathlib import Path
 import argparse
 import csv
@@ -20,7 +20,6 @@ def main():
     rows = list(csv.DictReader((ROOT / 'results/network/top10_candidates.csv').open()))
     canvas = Image.new('RGB', (1400, 2250), 'white')
     draw = ImageDraw.Draw(canvas)
-    # Pillow includes DejaVuSans in common installations; fall back portably.
     try:
         font = ImageFont.truetype('DejaVuSans.ttf', 25)
         small = ImageFont.truetype('DejaVuSans.ttf', 21)

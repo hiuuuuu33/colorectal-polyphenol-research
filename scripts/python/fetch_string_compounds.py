@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Freeze STRING 12.0 mappings and within-target networks for Figure 8.
+"""Build compound target networks from STRING 12.0 mappings and edges for Figure 8.
 
-Online retrieval needs internet access. --offline rebuilds summaries and layouts
-strictly from existing caches. Existing downloads are reused unless --refresh.
+Use --offline to rebuild summaries and layouts from cached responses, or
+--refresh to retrieve new responses from STRING.
 """
 
 import argparse

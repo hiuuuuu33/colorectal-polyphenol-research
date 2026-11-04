@@ -1,5 +1,5 @@
-# Reproduce the submitted analysis from the supplied processed FPKM matrix.
-# Run from the repository root: Rscript scripts/R/01_transcriptomics.R
+# Analyze colorectal expression data with unblocked limma and scaled PCA; save
+# differential-expression tables, progression-associated genes, and Figures 1-2.
 
 run_transcriptomics <- function(root = ".", verify = TRUE) {
   required <- c("limma", "ggplot2", "ggrepel", "pheatmap", "patchwork")
@@ -36,7 +36,6 @@ run_transcriptomics <- function(root = ".", verify = TRUE) {
   write.csv(sample_info, file.path(out, "sample_metadata.csv"), row.names = FALSE)
   write.csv(gene_ids[keep, ], file.path(out, "tested_gene_identifiers.csv"), row.names = FALSE)
 
-  # This is the original unblocked limma model used for the submitted figures.
   design <- stats::model.matrix(~0 + group)
   colnames(design) <- levels(group)
   contrasts <- limma::makeContrasts(
@@ -120,7 +119,6 @@ run_transcriptomics <- function(root = ".", verify = TRUE) {
                     bg = "white", limitsize = FALSE)
   }
 
-  # FactoMineR::PCA scales each gene to unit variance by default.
   pca <- stats::prcomp(t(log2_fpkm), center = TRUE, scale. = TRUE)
   variance <- 100 * pca$sdev^2 / sum(pca$sdev^2)
   pc <- data.frame(sample = rownames(pca$x), PC1 = pca$x[, 1], PC2 = pca$x[, 2], group = group)
@@ -182,7 +180,6 @@ run_transcriptomics <- function(root = ".", verify = TRUE) {
                    timevar = "Stage", times = c("Normal", "Adenoma", "CRC"), direction = "long")
   long$Stage <- factor(long$Stage, levels = levels(group))
   line_plot <- function(dir, color, title) {
-    # The submitted downregulated profile displays the 15 largest overall changes.
     chosen <- prog[prog$direction == dir, ]
     chosen <- head(chosen[order(-abs(chosen$logFC_NC)), "gene"], 15)
     dat <- long[long$gene %in% chosen, ]

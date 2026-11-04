@@ -1,4 +1,4 @@
-"""Verify the checksums of archived inputs and submitted research materials."""
+"""Verify SHA-256 checksums for research inputs and optionally update the manifest."""
 from pathlib import Path
 import argparse
 import csv

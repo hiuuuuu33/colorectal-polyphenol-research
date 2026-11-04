@@ -1,6 +1,4 @@
-# Regenerate Figures 3 and 4 from the original, frozen GO/KEGG result tables.
-# No online enrichment database is queried in this historical reproduction.
-# Run from the repository root: Rscript scripts/R/02_enrichment_figures.R
+# Plot Figures 3-4 and supplementary enrichment panels from archived GO/KEGG result tables.
 
 run_enrichment_figures <- function(root = ".", verify = TRUE) {
   required <- c("ggplot2", "patchwork")
@@ -34,7 +32,6 @@ run_enrichment_figures <- function(root = ".", verify = TRUE) {
                                            source_mode = "frozen_original_results"))
       manifests <- rbind(manifests, data.frame(input_file = paste0("data/enrichment/frozen/", filename),
                                                records = nrow(dat), mode = "original exported full @result table"))
-      # The paper shows up to 15 top-ranked significant terms in each GO panel.
       shown <- head(significant[order(significant$p.adjust, significant$pvalue), ], 15)
       ratios <- strsplit(shown$GeneRatio, "/", fixed = TRUE)
       shown$GeneRatio_numeric <- vapply(ratios, function(x) as.numeric(x[1]) / as.numeric(x[2]), numeric(1))

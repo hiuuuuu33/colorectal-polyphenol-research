@@ -2,6 +2,8 @@
 
 The reference is the unchanged 29-page `manuscript/submitted-manuscript.pdf`. All nine embedded figures are preserved in `figures/submitted/`.
 
+The [HTML notebook](https://hiuuuuu33.github.io/colorectal-polyphenol-research/) displays the executable code immediately before each figure. Its source is [Analysis.Rmd](../Analysis.Rmd) at the repository root; R plotting chunks save their images in `figures/notebook/`.
+
 | Submitted item | PDF page | Inputs | Executable companion | Reproduction path |
 |:--|--:|:--|:--|:--|
 | Figure 1: PCA and volcano plots | 8 | `data/transcriptomics/` | `scripts/R/01_transcriptomics.R` | Recomputed from FPKM |

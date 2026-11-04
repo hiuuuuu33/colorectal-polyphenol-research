@@ -1,4 +1,4 @@
-"""Extract embedded figures from the unchanged submitted PDF."""
+"""Extract manuscript figures and text, recording image checksums and PDF pages."""
 from pathlib import Path
 import csv
 import hashlib

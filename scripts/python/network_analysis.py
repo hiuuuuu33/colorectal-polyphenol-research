@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Recalculate saved network inputs; optional fresh proximity randomization.
+"""Calculate protein-network centrality and compound proximity.
 
-Historical Z scores are retained separately from new randomizations. The
-degree-bin sampling follows do Valle et al. (2021); sorted inputs and an
-explicit seed make new runs repeatable across Python hash seeds.
+Validate the saved results or generate a seeded null distribution. Degree-bin
+sampling follows do Valle et al. (2021), retaining self-loop degrees. Historical
+Z scores use saved randomization moments.
 """
 
 import argparse
@@ -134,7 +134,6 @@ def ppi_topology():
 
 
 def degree_bins(graph, minimum):
-    """Bins follow upstream get_degree_binning; preserve self-loop degrees."""
     by_degree = defaultdict(list)
     for node, degree in graph.degree():
         by_degree[degree].append(node)

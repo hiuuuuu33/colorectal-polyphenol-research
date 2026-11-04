@@ -5,6 +5,7 @@
     "generated_outputs_removed_before_execution": [
       "results/",
       "figures/reproduced/",
+      "figures/notebook/",
       "docs/index.html"
     ],
     "exit_code": 0,
@@ -13,7 +14,8 @@
     "table_5_structure_records": 11,
     "table_5_score_values": 22,
     "docking_grid_parameter_values": 18,
-    "embedded_images_decoded": 20
+    "embedded_images_decoded": 12,
+    "notebook_source": "Analysis.Rmd"
   },
   "numerical_checks": {
     "three_expression_contrasts_match_archived_exports": true,
@@ -26,12 +28,13 @@
   "browser_checks": {
     "desktop_viewport": [1440, 1000],
     "mobile_viewport": [390, 844],
-    "images_loaded": 20,
+    "images_loaded": 12,
     "broken_images": 0,
     "horizontal_page_overflow": false,
     "script_errors": 0,
     "external_asset_requests": 0,
-    "expandable_code_and_original_figures_work": true
+    "figure_sections_with_visible_preceding_code": 12,
+    "code_visible_by_default": true
   },
   "scope": "The default build reconstructs the archived workflow. Frozen enrichment statistics, saved randomization moments and historical docking poses are identified in the report and provenance documentation."
 }
