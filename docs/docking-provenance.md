@@ -52,6 +52,35 @@ To extract the original panels again:
 python3 scripts/extract_docking_panels.py
 ```
 
+## Why these targets and structures
+
+I selected CXCL8 and ADH1C for structural assessment because they occur in the
+29-gene progression-associated set, are relatively well connected in its PPI
+network, and have experimentally determined human protein structures available.
+CXCL8 has 13 direct connections in this network and ADH1C has seven. These are
+the selection criteria reported in Section 3.5 of my submitted manuscript.
+
+The deposited structures provide experimental atomic coordinates for receptor
+preparation. Their quality is documented by the resolution and refinement
+statistics below, checked against the preserved PDB headers and the linked RCSB
+entries. R factors are the depositor-reported values.
+
+| Structural feature | CXCL8-Fab / [6WZM](https://www.rcsb.org/structure/6WZM) | ADH1C / [1HT0](https://www.rcsb.org/structure/1HT0) |
+| --- | --- | --- |
+| Experimental method | X-ray diffraction | X-ray diffraction |
+| Resolution | 2.28 angstrom | 2.00 angstrom |
+| R-work | 0.187 | 0.193 |
+| R-free | 0.229 | 0.231 |
+| Human protein | CXCL8 | ADH1C gamma-2 |
+| Deposited protein chains | CXCL8 E/F; Fab heavy A/C, light B/D | ADH1C A/B |
+
+All ten prioritized compounds were docked against both receptor systems. The
+representative Figure 9 pairs were chosen from those results: phloretin has the
+most favorable primary-compound score in 6WZM (-6.1 kcal/mol), and kaempferol
+has the most favorable score in 1HT0 (-8.3 kcal/mol). Kaempferol also leads the
+network-proximity ranking. This explains the choice of the two illustrated
+poses separately from the choice of the two receptors.
+
 ## Structural systems and recorded settings
 
 The original 1HT0 file is human ADH1C gamma-2 and contains two protein chains,

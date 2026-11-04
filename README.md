@@ -8,7 +8,11 @@ I wanted to understand which gene-expression changes persist as normal colorecta
 
 This repository accompanies my manuscript, *Network-based discovery of bioactive polyphenols based on transcriptomic changes across the colorectal adenoma-carcinoma sequence*. I have included the data, my original analysis files, figures and final manuscript, together with an executable notebook. The notebook follows the analysis one step at a time: a short explanation, the code, then its output.
 
-## Main results
+## Research summary
+
+The expression results point to changes that begin at the adenoma stage: inflammatory recruitment increases while differentiated epithelial and metabolic functions decline. The carcinoma comparison adds extracellular-matrix organization, focal adhesion and cell-cycle activity. I identified 29 genes that change in the same direction across both sequential comparisons and used their protein relationships to connect these findings to a compound screen.
+
+Eleven unique compounds met the network-proximity cutoff. Kaempferol ranked first, followed by 4-methylcatechol, quercetin, punicalagin and umbelliferone. I took the ten highest-ranked compounds into structural assessment. Kaempferol also had the most favorable ADH1C docking score, making it my leading candidate for experimental follow-up. The [notebook's research abstract](https://hiuuuuu33.github.io/colorectal-polyphenol-research/#research-abstract) expands this summary, and the explanations beside each figure connect the analysis to the findings in my manuscript.
 
 | Analysis | Result |
 |:--|:--|
@@ -20,6 +24,12 @@ This repository accompanies my manuscript, *Network-based discovery of bioactive
 | Docking records | 10 primary compounds and one supplementary structure against two receptor systems |
 
 In the notebook, I recompute expression results from the processed FPKM matrix, protein centrality from the archived network, and observed distances between disease proteins and compound targets. For enrichment plots, I use the complete original GO and KEGG result tables. The historical compound ranking uses the saved random-distribution moments. I display the original STRING PPI export and native STRING images for each compound network. For docking, I rebuild the score table from the original workbook and show the four original images from my docking presentation individually.
+
+## Why I chose these docking systems
+
+I selected CXCL8 and ADH1C because both belong to the progression-associated gene set, have relatively high connectivity in its PPI network (13 and seven connections), and have experimentally determined human protein structures available. I used [6WZM](https://www.rcsb.org/structure/6WZM) and [1HT0](https://www.rcsb.org/structure/1HT0), resolved by X-ray diffraction at 2.28 and 2.00 angstrom, respectively. The notebook records their deposited refinement statistics, chain composition and receptor preparation, alongside the selection rationale in Section 3.5 of my manuscript.
+
+All ten prioritized compounds were docked against both receptor systems. I show phloretin-6WZM and kaempferol-1HT0 as representative pairs because each had the most favorable Vina score within its receptor: -6.1 and -8.3 kcal/mol, respectively. Kaempferol also ranked first in network proximity. The [docking section](https://hiuuuuu33.github.io/colorectal-polyphenol-research/#docking) explains these choices before presenting the score table and original images.
 
 ## Files to start with
 

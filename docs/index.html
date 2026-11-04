@@ -13119,13 +13119,25 @@ div.output_png img { max-width: 100%; height: auto; }
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Colorectal-adenoma-carcinoma-progression">Colorectal adenoma-carcinoma progression<a class="anchor-link" href="#Colorectal-adenoma-carcinoma-progression">¶</a></h1><p>Hiu Mai</p>
-<p>I wanted to identify genes that change consistently as colorectal tissue progresses from normal tissue to adenoma and early carcinoma, then use those genes to prioritize polyphenols. I use <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228012">GSE228012</a> for the expression analysis and archived compound-target records for the network analysis.</p>
+<p>I wanted to understand which molecular changes are already present in colorectal adenomas and persist in early carcinoma, and whether those changes could help identify polyphenols for further study. Adenomas provide an opportunity to investigate prevention before invasive cancer develops. This question led me from tissue expression profiles to protein networks, compound prioritization and structural assessment.</p>
 <p>This notebook follows the analysis from the expression matrix to the compound ranking and docking scores. It accompanies my <a href="https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/manuscript/submitted-manuscript.pdf">submitted manuscript</a>. The <a href="https://github.com/hiuuuuu33/colorectal-polyphenol-research">repository</a> contains the inputs, original research files and source records.</p>
-<p><a href="#expression-analysis">Expression analysis</a> · <a href="#progression-genes">Progression-associated genes</a> · <a href="#functional-enrichment">Functional enrichment</a> · <a href="#protein-network">Protein network</a> · <a href="#polyphenol-prioritization">Polyphenol prioritization</a> · <a href="#docking">Docking</a> · <a href="#checks-and-references">Checks and references</a></p>
+<p><a href="#research-abstract">Research abstract</a> · <a href="#expression-analysis">Expression analysis</a> · <a href="#progression-genes">Progression-associated genes</a> · <a href="#functional-enrichment">Functional enrichment</a> · <a href="#protein-network">Protein network</a> · <a href="#polyphenol-prioritization">Polyphenol prioritization</a> · <a href="#docking">Docking and structure selection</a> · <a href="#checks-and-references">Checks and references</a></p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=note-01"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a id="research-abstract"></a></p>
+<h2 id="Research-abstract">Research abstract<a class="anchor-link" href="#Research-abstract">¶</a></h2><p>Adapted from the abstract and results of my submitted manuscript.</p>
+<p>I investigated transcriptional changes across normal colorectal tissue, adenoma and early colorectal cancer (CRC), then used those changes to prioritize bioactive polyphenols. I analyzed <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228012">GSE228012</a>: adenomas from 11 individuals and paired stage-I CRC and adjacent normal tissues from another 11 patients. Differential expression identified 725 genes in adenoma versus normal tissue, 312 in CRC versus adenoma, and 1,544 in CRC versus normal tissue. Twenty-nine genes changed concordantly across both sequential comparisons: eight increased and 21 decreased.</p>
+<p>Functional enrichment linked adenoma formation to inflammatory recruitment and loss of differentiated epithelial and metabolic functions. Carcinoma showed additional extracellular-matrix organization, focal adhesion and cell-cycle activity. The 29 progression-associated proteins formed a STRING network with 61 associations. I then used the human interactome to connect disease-associated proteins with recorded compound targets. Of 66 compound entries representing 65 unique chemical identities, 11 identities met the network-proximity cutoff. Kaempferol ranked first, followed by 4-methylcatechol, quercetin, punicalagin and umbelliferone.</p>
+<p>I assessed the ten highest-ranked compounds against two progression-associated proteins with experimentally resolved structures, CXCL8 and ADH1C. Phloretin had the most favorable Vina score in the 6WZM receptor system (-6.1 kcal/mol), and kaempferol led the 1HT0 system (-8.3 kcal/mol). Together, the expression, network and structural results identify kaempferol as a leading candidate for experimental follow-up and provide a framework for investigating compounds relevant to adenoma-carcinoma progression.</p>
+<h3 id="How-the-analyses-connect">How the analyses connect<a class="anchor-link" href="#How-the-analyses-connect">¶</a></h3><p>The expression comparisons define changes associated with the tissue stages. I use the genes that change in the same direction across both sequential comparisons as the focused progression-associated set. Enrichment places the broader expression changes in biological pathways; the protein network shows relationships within the 29-gene set. Network proximity then ranks compounds by the positions of their targets in the human interactome. Docking adds a structural assessment of selected proteins using experimental atomic coordinates. Each section below follows one of these questions through its code and results.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-02"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Setup">Setup<a class="anchor-link" href="#Setup">¶</a></h2><p>I load the plotting packages and the functions used to read the archived results. The expression model and plotting steps are written out below. All data paths are relative to the repository folder.</p>
@@ -13164,11 +13176,11 @@ div.output_png img { max-width: 100%; height: auto; }
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-03"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-04"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><a id="expression-analysis"></a></p>
-<h2 id="Expression-analysis">Expression analysis<a class="anchor-link" href="#Expression-analysis">¶</a></h2><p>GSE228012 contains 33 samples, with 11 samples in each tissue group. I begin with the processed FPKM matrix. For repeated gene symbols, I retain the row with the highest mean expression, then recover the tissue labels from the sample names.</p>
+<h2 id="Expression-analysis">Expression analysis<a class="anchor-link" href="#Expression-analysis">¶</a></h2><p>GSE228012 contains 33 samples, with 11 samples in each tissue group. The adenomas come from 11 individuals; cancer and adjacent normal tissue are paired samples from a separate group of 11 patients. These are cross-sectional comparisons of tissue stages. I begin with the processed FPKM matrix. For repeated gene symbols, I retain the row with the highest mean expression, then recover the tissue labels from the sample names.</p>
 </div>
 </div>
 </div>
@@ -13229,7 +13241,7 @@ div.output_png img { max-width: 100%; height: auto; }
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-05"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-06"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>I keep genes with FPKM &gt; 1 in at least seven samples, using the original filter <code>round(0.2 * 33)</code>. I then apply log2(FPKM + 1). This leaves 12,298 genes for the expression comparisons.</p>
@@ -13287,7 +13299,7 @@ div.output_png img { max-width: 100%; height: auto; }
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-07"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-08"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Differential-expression">Differential expression<a class="anchor-link" href="#Differential-expression">¶</a></h3><p>I fit the original three-group limma model and compare adenoma with normal tissue, carcinoma with adenoma, and carcinoma with normal tissue. I use Benjamini-Hochberg adjusted P &lt; 0.05 and absolute log2 fold change &gt; 1 to select differentially expressed genes.</p>
@@ -13370,7 +13382,7 @@ div.output_png img { max-width: 100%; height: auto; }
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-09"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-10"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="PCA-and-volcano-plots">PCA and volcano plots<a class="anchor-link" href="#PCA-and-volcano-plots">¶</a></h3><p>I use PCA to examine variation across the samples. Each gene is centered and scaled to unit variance, following the original analysis. The first two components account for 25.6% and 11.6% of the variance.</p>
@@ -13424,10 +13436,10 @@ div.output_png img { max-width: 100%; height: auto; }
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-11"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-12"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The volcano plots place the size of each expression change against its adjusted P value. I combine them with the PCA plot to reproduce Figure 1.</p>
+<p>The volcano plots place the size of each expression change against its adjusted P value. I combine them with the PCA plot to reproduce Figure 1. The comparisons yield 725 significant genes in adenoma versus normal tissue, 312 in carcinoma versus adenoma, and 1,544 in carcinoma versus normal tissue. More genes pass the threshold in the first sequential comparison than in the second, directing attention to molecular changes already present at the adenoma stage.</p>
 </div>
 </div>
 </div>
@@ -23095,11 +23107,11 @@ BBDIQeB/NVCd6163cnsAAAAASUVORK5CYII=" width="900"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-13"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-14"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><a id="progression-genes"></a></p>
-<h2 id="Progression-associated-genes">Progression-associated genes<a class="anchor-link" href="#Progression-associated-genes">¶</a></h2><p>I next look for genes that change in the same direction across both sequential comparisons. I intersect the upregulated genes in adenoma versus normal and carcinoma versus adenoma, and repeat this for the downregulated genes. The result contains eight up/up genes and 21 down/down genes.</p>
+<h2 id="Progression-associated-genes">Progression-associated genes<a class="anchor-link" href="#Progression-associated-genes">¶</a></h2><p>I next look for genes that change in the same direction across both sequential comparisons. I intersect the upregulated genes in adenoma versus normal and carcinoma versus adenoma, and repeat this for the downregulated genes. The result contains eight up/up genes and 21 down/down genes. This focuses the next analysis on changes shared by both transitions, rather than selecting genes from the cancer-normal contrast alone.</p>
 </div>
 </div>
 </div>
@@ -23354,7 +23366,7 @@ BBDIQeB/NVCd6163cnsAAAAASUVORK5CYII=" width="900"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-15"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-16"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Heatmap-and-expression-trajectories">Heatmap and expression trajectories<a class="anchor-link" href="#Heatmap-and-expression-trajectories">¶</a></h3><p>For the heatmap, I standardize each gene across samples so that genes with different expression levels can be compared. The columns follow the normal-adenoma-carcinoma order; the rows are clustered.</p>
@@ -23384,7 +23396,7 @@ BBDIQeB/NVCd6163cnsAAAAASUVORK5CYII=" width="900"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-17"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-18"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>I calculate the mean log-transformed expression in each tissue group to draw the trajectories. The first eight rows below show the values used for the up/up genes.</p>
@@ -23488,10 +23500,10 @@ BBDIQeB/NVCd6163cnsAAAAASUVORK5CYII=" width="900"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-19"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-20"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Figure 2 combines the 29-gene heatmap with the trajectories. I show the 15 down/down genes with the largest overall changes and all eight up/up genes, matching the original plotting selection.</p>
+<p>Figure 2 combines the 29-gene heatmap with the trajectories. I show the 15 down/down genes with the largest overall changes and all eight up/up genes, matching the original plotting selection. Increasing genes include MYC, COL12A1, TNFRSF12A and CXCL8. Decreasing genes include ADH1C, CA12, HSD17B2, UGT1A10 and FABP2. In my manuscript, I interpret this combination as persistent inflammatory and stromal changes alongside loss of differentiated epithelial and metabolic functions.</p>
 </div>
 </div>
 </div>
@@ -31195,7 +31207,7 @@ L8iVwoqUIiEAAAAASUVORK5CYII=" width="900"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-21"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-22"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><a id="functional-enrichment"></a></p>
@@ -31349,7 +31361,7 @@ L8iVwoqUIiEAAAAASUVORK5CYII=" width="900"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-23"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-24"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>I plot up to 15 significant terms in each panel, ordered by gene ratio. Point size gives the gene count and color gives the adjusted P value. The same function is used for both sequential comparisons.</p>
@@ -31390,10 +31402,10 @@ L8iVwoqUIiEAAAAASUVORK5CYII=" width="900"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-25"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-26"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Adenoma-versus-normal-tissue">Adenoma versus normal tissue<a class="anchor-link" href="#Adenoma-versus-normal-tissue">¶</a></h3><p>Figure 3 shows the biological processes, cellular components, molecular functions and KEGG pathways in the adenoma-normal comparison.</p>
+<h3 id="Adenoma-versus-normal-tissue">Adenoma versus normal tissue<a class="anchor-link" href="#Adenoma-versus-normal-tissue">¶</a></h3><p>Figure 3 shows the biological processes, cellular components, molecular functions and KEGG pathways in the adenoma-normal comparison. The upregulated pathways include cytokine-cytokine receptor interaction, IL-17 signaling and NOD-like receptor signaling. Downregulated pathways include mineral absorption, bile secretion, fat digestion and absorption, and pentose and glucuronate interconversions. These results connect the early expression shift to inflammatory recruitment and reduced epithelial transport and metabolic programs, as discussed in Section 3.2 of my manuscript.</p>
 </div>
 </div>
 </div>
@@ -41134,10 +41146,10 @@ gg==" width="1050"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-27"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-28"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Carcinoma-versus-adenoma">Carcinoma versus adenoma<a class="anchor-link" href="#Carcinoma-versus-adenoma">¶</a></h3><p>I apply the same plotting rules to the carcinoma-adenoma comparison for Figure 4.</p>
+<h3 id="Carcinoma-versus-adenoma">Carcinoma versus adenoma<a class="anchor-link" href="#Carcinoma-versus-adenoma">¶</a></h3><p>I apply the same plotting rules to the carcinoma-adenoma comparison for Figure 4. Collagen fibril organization and extracellular-matrix organization are prominent, with contributions from collagen genes, FAP and POSTN. The pathway results add focal adhesion and cell-cycle activity. Compared with the adenoma-normal findings, this places greater emphasis on matrix remodeling and proliferation during the transition to carcinoma.</p>
 </div>
 </div>
 </div>
@@ -50281,11 +50293,11 @@ YII=" width="1050"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-29"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-30"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><a id="protein-network"></a></p>
-<h2 id="Protein-network">Protein network<a class="anchor-link" href="#Protein-network">¶</a></h2><p>I use the archived STRING edges to examine connections among the progression-associated proteins. The Python script recalculates network centrality and checks the observed compound-disease distances against the saved results. The protein network contains 29 nodes and 61 edges.</p>
+<h2 id="Protein-network">Protein network<a class="anchor-link" href="#Protein-network">¶</a></h2><p>I use STRING to ask whether the 29 progression-associated proteins share functional relationships. The protein network contains 29 nodes and 61 associations; my manuscript reports 28 expected associations and PPI enrichment P = 2.99 x 10^-8. This connects the individual expression changes into a biological network and helps identify proteins for structural follow-up. The Python script recalculates centrality from the archived edges and checks the observed compound-disease distances against the saved results.</p>
 </div>
 </div>
 </div>
@@ -50385,7 +50397,7 @@ YII=" width="1050"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-31"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-32"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Progression-associated-protein-network">Progression-associated protein network<a class="anchor-link" href="#Progression-associated-protein-network">¶</a></h3><p>I use the original STRING export for Figure 5A. It retains the website's colored protein nodes, structure thumbnails and evidence-channel lines. Its 29 node labels and 61 edges match the archived analysis tables. The display script composites the original transparent image onto white and checks the archived SVG against those tables.</p>
@@ -72064,10 +72076,10 @@ YSIfBgAAAAAAAAAAAAAAAACF6f8Cgo1IJbKIglIAAAAASUVORK5CYII="/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-33"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-34"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Protein-centrality">Protein centrality<a class="anchor-link" href="#Protein-centrality">¶</a></h3><p>I compare degree, betweenness and closeness for the ten highest-degree proteins. Degree counts direct connections; betweenness and closeness describe each protein's position within its connected component.</p>
+<h3 id="Protein-centrality">Protein centrality<a class="anchor-link" href="#Protein-centrality">¶</a></h3><p>I compare degree, betweenness and closeness for the ten highest-degree proteins. Degree counts direct connections; betweenness and closeness describe each protein's position within its connected component. MYC and CXCL8 each have 13 connections, the highest degree in this network. ADH1C has seven. These results later contribute to the choice of CXCL8 and ADH1C for docking, together with the availability of experimental structures.</p>
 </div>
 </div>
 </div>
@@ -73286,11 +73298,11 @@ AAAAAElFTkSuQmCC" width="825"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-35"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-36"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><a id="polyphenol-prioritization"></a></p>
-<h2 id="Polyphenol-prioritization">Polyphenol prioritization<a class="anchor-link" href="#Polyphenol-prioritization">¶</a></h2><p>I examine the proximity between compound targets and disease proteins in the archived human interactome. The expression analysis above retains 29 genes, and the archived proximity calculation maps 24 disease nodes into that interactome. I recalculate the observed distances and recover the historical Z scores from the saved null-distribution means and standard deviations.</p>
+<h2 id="Polyphenol-prioritization">Polyphenol prioritization<a class="anchor-link" href="#Polyphenol-prioritization">¶</a></h2><p>I examine whether the recorded targets of a compound lie unusually close to the disease-associated proteins in the human interactome. This links the progression-associated expression results to candidate compounds while allowing a compound to act through neighboring proteins. The expression analysis above retains 29 genes, and the archived proximity calculation maps 24 disease nodes into that interactome. I recalculate the observed distances and recover the historical Z scores from the saved null-distribution means and standard deviations.</p>
 <h3 id="Proximity-across-the-compound-records">Proximity across the compound records<a class="anchor-link" href="#Proximity-across-the-compound-records">¶</a></h3><p>Figure 6A shows the closest-distance Z scores for all 66 recorded entries. The dashed lines mark Z = -1.96 and Z = 1.96.</p>
 </div>
 </div>
@@ -74798,7 +74810,7 @@ sIEAXg2jHC3JuTAAAAAASUVORK5CYII=" width="750"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-37"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-38"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="The-ten-highest-ranked-compounds">The ten highest-ranked compounds<a class="anchor-link" href="#The-ten-highest-ranked-compounds">¶</a></h3><p>The 66 recorded names correspond to 65 PubChem identities. Eleven identities fall below Z = -1.96. I rank the unique identities by the closest-distance Z score and retain the first ten.</p>
@@ -74909,10 +74921,10 @@ sIEAXg2jHC3JuTAAAAAASUVORK5CYII=" width="750"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-39"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-40"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Kaempferol is the highest-ranked compound. In Figure 6B, the horizontal position gives -Z, and the point size gives the number of mapped targets. The labels retain the signed Z scores.</p>
+<p>Kaempferol is the highest-ranked compound, with a closest-distance Z score of approximately -4.02. Its recorded targets are closer to the disease-associated proteins than expected under the archived randomization model. In Figure 6B, the horizontal position gives -Z, and the point size gives the number of mapped targets. The labels retain the signed Z scores. I carry the ten highest-ranked unique identities forward to chemical characterization and docking, linking the structural assessment to a defined network screen.</p>
 </div>
 </div>
 </div>
@@ -76946,7 +76958,7 @@ RK5CYII=" width="825"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-41"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-42"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Chemical-structures">Chemical structures<a class="anchor-link" href="#Chemical-structures">¶</a></h3><p>I use the PubChem identifiers to assemble Figure 7 from the cached chemical depictions. This step runs the <a href="https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/scripts/build_chemical_structures.py">structure-assembly script</a> and displays the image it creates.</p>
@@ -78945,7 +78957,7 @@ yz8YNU8NMCNmQAAAAABJRU5ErkJggg=="/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-43"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-44"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Compound-target-networks">Compound target networks<a class="anchor-link" href="#Compound-target-networks">¶</a></h3><p>I use cached human STRING 12.0 responses to reconstruct associations among each compound's recorded targets. The query uses functional associations, a combined score cutoff of 0.400, and no added neighbors. I retain native STRING images and check their node and edge sets against the cached data. The table shows how many recorded targets map to STRING and how many edges pass the cutoff.</p>
@@ -79048,7 +79060,7 @@ yz8YNU8NMCNmQAAAAABJRU5ErkJggg=="/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-45"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-46"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Figure-8A:-kaempferol">Figure 8A: kaempferol<a class="anchor-link" href="#Figure-8A:-kaempferol">¶</a></h3><p>This native STRING view contains 38 mapped proteins and 161 within-target associations. I show it separately so its labels and protein thumbnails remain readable. Isolated targets are retained. <a href="https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/figures/reproduced/network/string_native/kaempferol.png">Full-resolution STRING image</a>.</p>
@@ -87716,7 +87728,7 @@ gg=="/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-47"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-48"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Figure-8B:-4-methylcatechol">Figure 8B: 4-methylcatechol<a class="anchor-link" href="#Figure-8B:-4-methylcatechol">¶</a></h3><p>This native STRING view contains 2 mapped proteins and 0 within-target associations. I show it separately so its labels and protein thumbnails remain readable. Isolated targets are retained. <a href="https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/figures/reproduced/network/string_native/4methylcatechol.png">Full-resolution STRING image</a>.</p>
@@ -88014,7 +88026,7 @@ AoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCCq
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-49"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-50"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Figure-8C:-quercetin">Figure 8C: quercetin<a class="anchor-link" href="#Figure-8C:-quercetin">¶</a></h3><p>This native STRING view contains 215 mapped proteins and 1560 within-target associations. I show it separately so its labels and protein thumbnails remain readable. Isolated targets are retained. <a href="https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/figures/reproduced/network/string_native/quercetin.png">Full-resolution STRING image</a>.</p>
@@ -105575,7 +105587,7 @@ AAAAAACAwuT/B83WIfcH0z0IAAAAAElFTkSuQmCC"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-51"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-52"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Figure-8D:-punicalagin">Figure 8D: punicalagin<a class="anchor-link" href="#Figure-8D:-punicalagin">¶</a></h3><p>This native STRING view contains 1 mapped protein and 0 within-target associations. I show it separately so its labels and protein thumbnails remain readable. Isolated targets are retained. <a href="https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/figures/reproduced/network/string_native/punicalagin.png">Full-resolution STRING image</a>.</p>
@@ -105765,7 +105777,7 @@ QmCC"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-53"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-54"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Figure-8E:-umbelliferone">Figure 8E: umbelliferone<a class="anchor-link" href="#Figure-8E:-umbelliferone">¶</a></h3><p>This native STRING view contains 3 mapped proteins and 1 within-target association. I show it separately so its labels and protein thumbnails remain readable. Isolated targets are retained. <a href="https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/figures/reproduced/network/string_native/umbelliferone.png">Full-resolution STRING image</a>.</p>
@@ -106200,7 +106212,7 @@ gg=="/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-55"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-56"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Figure-8F:-esculetin">Figure 8F: esculetin<a class="anchor-link" href="#Figure-8F:-esculetin">¶</a></h3><p>This native STRING view contains 1 mapped protein and 0 within-target associations. I show it separately so its labels and protein thumbnails remain readable. Isolated targets are retained. <a href="https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/figures/reproduced/network/string_native/esculetin.png">Full-resolution STRING image</a>.</p>
@@ -106370,7 +106382,7 @@ YII="/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-57"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-58"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Figure-8G:-2,3-dihydroxybenzoic-acid">Figure 8G: 2,3-dihydroxybenzoic acid<a class="anchor-link" href="#Figure-8G:-2,3-dihydroxybenzoic-acid">¶</a></h3><p>This native STRING view contains 1 mapped protein and 0 within-target associations. I show it separately so its labels and protein thumbnails remain readable. Isolated targets are retained. <a href="https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/figures/reproduced/network/string_native/23dihydroxybenzoicacid.png">Full-resolution STRING image</a>.</p>
@@ -106540,7 +106552,7 @@ gg=="/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-59"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-60"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Figure-8H:-trans-resveratrol">Figure 8H: trans-resveratrol<a class="anchor-link" href="#Figure-8H:-trans-resveratrol">¶</a></h3><p>This native STRING view contains 61 mapped proteins and 232 within-target associations. I show it separately so its labels and protein thumbnails remain readable. Isolated targets are retained. <a href="https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/figures/reproduced/network/string_native/resveratrol.png">Full-resolution STRING image</a>.</p>
@@ -116091,7 +116103,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAA+Nn5/wGHty0FIH7tkgAAAABJRU5ErkJggg=="/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-61"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-62"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Figure-8I:-1,4-naphthoquinone">Figure 8I: 1,4-naphthoquinone<a class="anchor-link" href="#Figure-8I:-1,4-naphthoquinone">¶</a></h3><p>This native STRING view contains 4 mapped proteins and 1 within-target association. I show it separately so its labels and protein thumbnails remain readable. Isolated targets are retained. <a href="https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/figures/reproduced/network/string_native/14naphtoquinone.png">Full-resolution STRING image</a>.</p>
@@ -116661,7 +116673,7 @@ CvVO6/8HcLDPaOpihogAAAAASUVORK5CYII="/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-63"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-64"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Figure-8J:-phloretin">Figure 8J: phloretin<a class="anchor-link" href="#Figure-8J:-phloretin">¶</a></h3><p>This native STRING view contains 2 mapped proteins and 1 within-target association. I show it separately so its labels and protein thumbnails remain readable. Isolated targets are retained. <a href="https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/figures/reproduced/network/string_native/phloretin.png">Full-resolution STRING image</a>.</p>
@@ -116986,11 +116998,56 @@ os78JAAAAABJRU5ErkJggg=="/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-65"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-66"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><a id="docking"></a></p>
-<h2 id="Docking">Docking<a class="anchor-link" href="#Docking">¶</a></h2><p>The original workbook contains scores for ten primary compounds and one supplementary punicalagin structure against ADH1C (1HT0) and the CXCL8-Fab receptor system (6WZM). I read those records directly to rebuild Table 5.</p>
+<h2 id="Docking">Docking<a class="anchor-link" href="#Docking">¶</a></h2><p>I use docking to examine possible compound poses in experimentally resolved receptor structures after network prioritization. All ten prioritized compounds were docked against both receptor systems. The original workbook also includes one supplementary punicalagin structure record. The choice of receptors and the choice of the two representative compound-receptor figures follow separate criteria, described below.</p>
+<h3 id="Why-I-selected-CXCL8-and-ADH1C">Why I selected CXCL8 and ADH1C<a class="anchor-link" href="#Why-I-selected-CXCL8-and-ADH1C">¶</a></h3><p>I selected these two proteins because they belong to the 29-gene progression-associated set, are relatively well connected in its PPI network, and have experimentally determined human protein structures available for receptor preparation. CXCL8 has 13 connections and ADH1C has seven, as reported in Section 3.5 of my manuscript. Their expression patterns also connect the structural analysis to the study's findings: CXCL8 increases across the sequential comparisons, while ADH1C decreases with the loss of differentiated metabolic functions.</p>
+<h3 id="Why-I-used-these-PDB-structures">Why I used these PDB structures<a class="anchor-link" href="#Why-I-used-these-PDB-structures">¶</a></h3><p>I used the X-ray crystal structures <a href="https://www.rcsb.org/structure/6WZM">6WZM</a> for CXCL8 and <a href="https://www.rcsb.org/structure/1HT0">1HT0</a> for ADH1C. They provide experimentally resolved atomic coordinates at 2.28 and 2.00 angstrom resolution, respectively. Their deposited resolution and refinement statistics document the structural quality supporting receptor preparation.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Structural feature</th>
+<th style="text-align:left">CXCL8 receptor system: 6WZM</th>
+<th style="text-align:left">ADH1C receptor system: 1HT0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Experimental method</td>
+<td style="text-align:left">X-ray diffraction</td>
+<td style="text-align:left">X-ray diffraction</td>
+</tr>
+<tr>
+<td style="text-align:left">Resolution</td>
+<td style="text-align:left">2.28 angstrom</td>
+<td style="text-align:left">2.00 angstrom</td>
+</tr>
+<tr>
+<td style="text-align:left">Depositor R-work / R-free</td>
+<td style="text-align:left">0.187 / 0.229</td>
+<td style="text-align:left">0.193 / 0.231</td>
+</tr>
+<tr>
+<td style="text-align:left">Protein represented</td>
+<td style="text-align:left">Human CXCL8 bound to an antibody Fab</td>
+<td style="text-align:left">Human ADH1C gamma-2</td>
+</tr>
+<tr>
+<td style="text-align:left">Deposited components</td>
+<td style="text-align:left">CXCL8 chains E/F; Fab heavy chains A/C and light chains B/D</td>
+<td style="text-align:left">ADH1C chains A/B, two NAD molecules and four zinc ions</td>
+</tr>
+<tr>
+<td style="text-align:left">Receptor preparation in my manuscript</td>
+<td style="text-align:left">Complete A-F protein assembly used</td>
+<td style="text-align:left">NAD and zinc removed during preparation</td>
+</tr>
+</tbody>
+</table>
+<p>The chain composition and preparation define the docking systems. In 6WZM, the archived search box is centered at the CXCL8-Fab interface, near the crystallographic PG4 site. In 1HT0, it is centered at the crystallographic NAD-binding region of chain A. I retain those settings in the <a href="https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/docs/docking-provenance.md">docking record</a>, so the images and scores can be read in the context of the receptor actually used. Structural statistics in the table are the depositor values in the linked RCSB entries and the preserved PDB headers.</p>
+<h3 id="Scores-for-the-full-compound-set">Scores for the full compound set<a class="anchor-link" href="#Scores-for-the-full-compound-set">¶</a></h3><p>I read the original workbook directly to rebuild Table 5. It contains the ten primary compound records and the supplementary structure against both receptors, rather than only the two pairs shown in Figure 9.</p>
 </div>
 </div>
 </div>
@@ -117113,10 +117170,10 @@ os78JAAAAABJRU5ErkJggg=="/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-67"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-68"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Comparing-the-archived-scores">Comparing the archived scores<a class="anchor-link" href="#Comparing-the-archived-scores">¶</a></h3><p>I plot both receptor systems on the same score scale. The supplementary punicalagin structure is marked separately, and the recorded positive score is retained.</p>
+<h3 id="Comparing-the-archived-scores">Comparing the archived scores<a class="anchor-link" href="#Comparing-the-archived-scores">¶</a></h3><p>I plot both receptor systems on the same score scale and compare compounds within each receptor. Phloretin has the most favorable primary-compound score in 6WZM (-6.1 kcal/mol), followed by trans-resveratrol (-5.9). Kaempferol leads in 1HT0 (-8.3 kcal/mol), followed by quercetin (-8.2). The supplementary punicalagin structure is marked separately, and the recorded positive score is retained.</p>
 </div>
 </div>
 </div>
@@ -119585,10 +119642,17 @@ zju3lmDacAAAAABJRU5ErkJggg==" width="862.5"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-69"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-70"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Figure-9A:-Phloretin-in-the-6WZM-receptor-system">Figure 9A: Phloretin in the 6WZM receptor system<a class="anchor-link" href="#Figure-9A:-Phloretin-in-the-6WZM-receptor-system">¶</a></h3><p>I extract the four original PNG panels from my docking presentation and show each at its original resolution. These are the source images used in submitted Figure 9. This first panel shows the original three-dimensional receptor view for phloretin and 6WZM.</p>
+<h3 id="Why-these-two-representative-poses">Why these two representative poses<a class="anchor-link" href="#Why-these-two-representative-poses">¶</a></h3><p>I show phloretin-6WZM and kaempferol-1HT0 because each has the most favorable Vina score among the ten primary compounds in its receptor system. Kaempferol also ranks first in network proximity, connecting the leading network candidate with the strongest docking score for ADH1C. The four original panels below show the three-dimensional pose and two-dimensional contacts for each selected pair.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-71"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Figure-9A:-Phloretin-in-the-6WZM-receptor-system">Figure 9A: Phloretin in the 6WZM receptor system<a class="anchor-link" href="#Figure-9A:-Phloretin-in-the-6WZM-receptor-system">¶</a></h3><p>I extract the four original PNG panels from my docking presentation and show each at its original resolution. These are the source images used in submitted Figure 9. In this first panel, phloretin lies within the predefined interface search region between CXCL8 chain F and Fab heavy chain C. It is the representative pose for the -6.1 kcal/mol result.</p>
 </div>
 </div>
 </div>
@@ -130300,10 +130364,10 @@ DQx0BNx0EjwAAAAASUVORK5CYII="/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-71"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-73"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Figure-9B:-Phloretin-interaction-map">Figure 9B: Phloretin interaction map<a class="anchor-link" href="#Figure-9B:-Phloretin-interaction-map">¶</a></h3><p>This is the original two-dimensional interaction diagram for the phloretin / 6WZM pose, including its residue labels and interaction legend.</p>
+<h3 id="Figure-9B:-Phloretin-interaction-map">Figure 9B: Phloretin interaction map<a class="anchor-link" href="#Figure-9B:-Phloretin-interaction-map">¶</a></h3><p>The original interaction diagram identifies contacts on both sides of the interface. My manuscript describes a hydrogen bond with Tyr105 of Fab chain C, and contacts with Tyr13, Phe21 and Leu43 of CXCL8 chain F. The diagram also annotates an unfavorable donor-donor geometry involving Arg47. These annotations describe the geometry of the displayed pose.</p>
 </div>
 </div>
 </div>
@@ -131270,10 +131334,10 @@ TkSuQmCC"/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-73"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-75"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Figure-9C:-Kaempferol-in-ADH1C">Figure 9C: Kaempferol in ADH1C<a class="anchor-link" href="#Figure-9C:-Kaempferol-in-ADH1C">¶</a></h3><p>This original three-dimensional panel shows kaempferol in the 1HT0 ADH1C receptor system.</p>
+<h3 id="Figure-9C:-Kaempferol-in-ADH1C">Figure 9C: Kaempferol in ADH1C<a class="anchor-link" href="#Figure-9C:-Kaempferol-in-ADH1C">¶</a></h3><p>Kaempferol occupies the chain-A pocket in the prepared 1HT0 receptor, with a best-mode score of -8.3 kcal/mol. I selected this view because kaempferol led the ADH1C docking scores and the network-proximity ranking. The original three-dimensional panel places the ligand within the receptor used for that calculation.</p>
 </div>
 </div>
 </div>
@@ -143784,10 +143848,10 @@ JEmSNIYhuiRJkiRJkiRJYxiiS5IkSZIkSZI0xv8B/EREBzYDxx0AAAAASUVORK5CYII="/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-75"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-77"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Figure-9D:-Kaempferol-interaction-map">Figure 9D: Kaempferol interaction map<a class="anchor-link" href="#Figure-9D:-Kaempferol-interaction-map">¶</a></h3><p>This is the original two-dimensional interaction diagram for the kaempferol / 1HT0 pose. The source PPT and the four extracted PNG files are linked in the <a href="https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/docs/docking-provenance.md">docking record</a>.</p>
+<h3 id="Figure-9D:-Kaempferol-interaction-map">Figure 9D: Kaempferol interaction map<a class="anchor-link" href="#Figure-9D:-Kaempferol-interaction-map">¶</a></h3><p>The original interaction map annotates a pi-cation contact with Arg47, a pi-sigma contact with Val203 and a carbon-hydrogen-bond contact with Gly201. Additional residues contribute van der Waals contacts, and Arg369 has an unfavorable donor-donor geometry. This gives a residue-level description of the representative pose reported in Section 3.5. The source PPT and four original PNG files are linked in the <a href="https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/docs/docking-provenance.md">docking record</a>.</p>
 </div>
 </div>
 </div>
@@ -145021,7 +145085,15 @@ TFkPAAAAAAAn+/8BLtSbEKu9dWoAAAAASUVORK5CYII="/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-77"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-79"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="What-I-take-from-these-results">What I take from these results<a class="anchor-link" href="#What-I-take-from-these-results">¶</a></h2><p>The expression analyses suggest that inflammatory recruitment and loss of mature epithelial functions are already established in adenomas. The carcinoma comparison adds matrix organization, adhesion and cell-cycle changes. The 29 genes that change in the same direction across both comparisons connect these tissue-stage findings to a focused protein network and a defined compound screen.</p>
+<p>Kaempferol is the clearest candidate to carry forward from this analysis: it ranks first in network proximity and has the most favorable ADH1C docking score among the ten primary compounds. Phloretin provides the complementary structural example for the CXCL8-Fab system because it leads that receptor's scores. The next experimental question is whether these compounds engage the relevant targets and alter progression-associated expression or phenotypes in normal colon, adenoma and CRC models. I discuss this route from computational prioritization to target-engagement and organoid experiments in Section 4 of my manuscript.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-80"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><a id="checks-and-references"></a></p>
@@ -145197,7 +145269,7 @@ TFkPAAAAAAAn+/8BLtSbEKu9dWoAAAAASUVORK5CYII="/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-79"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-82"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>I also check the SHA-256 hashes of the 196 preserved research inputs. This confirms that the input files still match the repository manifest.</p>
@@ -145230,7 +145302,7 @@ TFkPAAAAAAAn+/8BLtSbEKu9dWoAAAAASUVORK5CYII="/>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-81"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-84"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Software-used-in-this-run">Software used in this run<a class="anchor-link" href="#Software-used-in-this-run">¶</a></h3><p>The R session below records the software used to execute these cells. Python package versions are recorded in <code>environment/requirements.txt</code> and <code>environment/requirements-notebook.txt</code>.</p>
@@ -145290,7 +145362,7 @@ loaded via a namespace (and not attached):
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-83"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=note-86"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="References-and-source-records">References and source records<a class="anchor-link" href="#References-and-source-records">¶</a></h2><ul>

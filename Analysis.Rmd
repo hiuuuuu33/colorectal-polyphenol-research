@@ -31,13 +31,29 @@ python <- Sys.getenv("PYTHON", unset = Sys.which("python3"))
 if (!nzchar(python)) stop("Python 3 is required; set PYTHON to its executable.")
 ```
 
-This study examines gene-expression changes across normal colorectal tissue, adenoma and early colorectal cancer, and uses the human interactome to prioritize polyphenols associated with progression-related proteins. The expression dataset is [GSE228012](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228012), with 33 samples and 11 samples per tissue group.
+I wanted to understand which molecular changes are already present in colorectal adenomas and persist in early carcinoma, and whether those changes could help identify polyphenols for further study. Adenomas provide an opportunity to investigate prevention before invasive cancer develops. This question led me from tissue expression profiles to protein networks, compound prioritization and structural assessment.
 
 [Research files and README](https://github.com/hiuuuuu33/colorectal-polyphenol-research) | [Final manuscript](https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/manuscript/submitted-manuscript.pdf) | [R Markdown source](https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/Analysis.Rmd)
 
+# Research Abstract {#research-abstract}
+
+Adapted from the abstract and results of my submitted manuscript.
+
+I investigated transcriptional changes across normal colorectal tissue, adenoma and early colorectal cancer (CRC), then used those changes to prioritize bioactive polyphenols. I analyzed [GSE228012](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228012): adenomas from 11 individuals and paired stage-I CRC and adjacent normal tissues from another 11 patients. Differential expression identified 725 genes in adenoma versus normal tissue, 312 in CRC versus adenoma, and 1,544 in CRC versus normal tissue. Twenty-nine genes changed concordantly across both sequential comparisons: eight increased and 21 decreased.
+
+Functional enrichment linked adenoma formation to inflammatory recruitment and loss of differentiated epithelial and metabolic functions. Carcinoma showed additional extracellular-matrix organization, focal adhesion and cell-cycle activity. The 29 progression-associated proteins formed a STRING network with 61 associations. I then used the human interactome to connect disease-associated proteins with recorded compound targets. Of 66 compound entries representing 65 unique chemical identities, 11 identities met the network-proximity cutoff. Kaempferol ranked first, followed by 4-methylcatechol, quercetin, punicalagin and umbelliferone.
+
+I assessed the ten highest-ranked compounds against two progression-associated proteins with experimentally resolved structures, CXCL8 and ADH1C. Phloretin had the most favorable Vina score in the 6WZM receptor system (-6.1 kcal/mol), and kaempferol led the 1HT0 system (-8.3 kcal/mol). Together, the expression, network and structural results identify kaempferol as a leading candidate for experimental follow-up and provide a framework for investigating compounds relevant to adenoma-carcinoma progression.
+
+## How the Analyses Connect
+
+The expression comparisons define changes associated with the tissue stages. I use the genes that change in the same direction across both sequential comparisons as the focused progression-associated set. Enrichment places the broader expression changes in biological pathways; the protein network shows relationships within the 29-gene set. Network proximity then ranks compounds by the positions of their targets in the human interactome. Docking adds a structural assessment of selected proteins using experimental atomic coordinates. Each section below follows one of these questions through its code and results.
+
 # Data and Analysis Setup {#analysis-setup}
 
-The expression analysis uses log2(FPKM + 1), a three-group limma model, adjusted P < 0.05 and absolute log2 fold change > 1. The analysis modules write result tables and check them against the archived exports. Each figure section below executes its plotting code.
+GSE228012 contains 33 samples, with 11 samples in each tissue group. The adenomas come from 11 individuals; cancer and adjacent normal tissue are paired samples from a separate group of 11 patients. These are cross-sectional comparisons of tissue stages. I begin with the processed FPKM matrix and retain the row with the highest mean expression for repeated gene symbols.
+
+I keep genes with FPKM > 1 in at least seven samples, then apply log2(FPKM + 1). This leaves 12,298 genes for the expression comparisons. I fit the original three-group limma model and compare adenoma with normal tissue, carcinoma with adenoma, and carcinoma with normal tissue. I use Benjamini-Hochberg adjusted P < 0.05 and absolute log2 fold change > 1 to select differentially expressed genes. The analysis modules write result tables and check them against the archived exports. Each figure section below executes its plotting code.
 
 ```{r analysis-setup}
 library(ggplot2)
@@ -61,7 +77,9 @@ plot_theme <- theme_bw(base_size = 12) +
 
 # Figure 1: Transcriptomic Overview {#figure-1}
 
-PCA uses unit-variance scaling. The three volcano plots show adenoma versus normal, carcinoma versus adenoma, and carcinoma versus normal.
+I use PCA to examine variation across the samples. Each gene is centered and scaled to unit variance, following the original analysis. The first two components account for 25.6% and 11.6% of the variance. The volcano plots place the size of each expression change against its adjusted P value.
+
+The comparisons yield 725 significant genes in adenoma versus normal tissue, 312 in carcinoma versus adenoma, and 1,544 in carcinoma versus normal tissue. More genes pass the threshold in the first sequential comparison than in the second, directing attention to molecular changes already present at the adenoma stage.
 
 ```{r figure-1, fig.width=12, fig.height=9, fig.cap="Figure 1. PCA and differential-expression volcano plots."}
 pca <- prcomp(t(log2_fpkm), center = TRUE, scale. = TRUE)
@@ -98,7 +116,9 @@ figure1
 
 # Figure 2: Progression-Associated Genes {#figure-2}
 
-The sequential contrasts identify 8 up/up and 21 down/down genes. The heatmap includes all 29 genes; the downregulated trajectory panel displays the 15 largest overall expression changes, matching the archived plotting selection.
+I next look for genes that change in the same direction across both sequential comparisons. I intersect the upregulated genes in adenoma versus normal and carcinoma versus adenoma, and repeat this for the downregulated genes. The result contains eight up/up genes and 21 down/down genes. This focuses the next analysis on changes shared by both transitions.
+
+For the heatmap, I standardize each gene across samples so that genes with different expression levels can be compared. The columns follow the normal-adenoma-carcinoma order; the rows are clustered. The trajectories show mean log-transformed expression in each tissue group. I show the 15 down/down genes with the largest overall changes and all eight up/up genes, matching the original plotting selection. Increasing genes include MYC, COL12A1, TNFRSF12A and CXCL8. Decreasing genes include ADH1C, CA12, HSD17B2, UGT1A10 and FABP2. In my manuscript, I interpret this combination as persistent inflammatory and stromal changes alongside loss of differentiated epithelial and metabolic functions.
 
 ```{r figure-2, fig.width=12, fig.height=9, fig.cap="Figure 2. A: 29-gene heatmap. B: 15 down/down trajectories. C: all eight up/up trajectories."}
 stage_order <- order(group)
@@ -146,7 +166,9 @@ figure2
 
 # Figure 3: Adenoma Versus Normal Enrichment {#figure-3}
 
-GO and KEGG statistics come from the complete original result tables. The code filters adjusted P < 0.05 and draws up to 15 terms per panel.
+I use the complete GO and KEGG result tables saved with the project. These are the original enrichment statistics; the following code filters adjusted P < 0.05 and draws up to 15 terms per panel. Point size gives the gene count and color gives the adjusted P value. The same plotting function is used for both sequential comparisons.
+
+Figure 3 shows the biological processes, cellular components, molecular functions and KEGG pathways in the adenoma-normal comparison. The upregulated pathways include cytokine-cytokine receptor interaction, IL-17 signaling and NOD-like receptor signaling. Downregulated pathways include mineral absorption, bile secretion, fat digestion and absorption, and pentose and glucuronate interconversions. These results connect the early expression shift to inflammatory recruitment and reduced epithelial transport and metabolic programs, as discussed in Section 3.2 of my manuscript.
 
 ```{r figure-3, fig.width=14, fig.height=15, fig.cap="Figure 3. Functional enrichment for adenoma versus normal tissue."}
 enrichment <- run_enrichment_figures(root)
@@ -179,7 +201,7 @@ plot_enrichment("Adenoma_vs_Normal")
 
 # Figure 4: Carcinoma Versus Adenoma Enrichment {#figure-4}
 
-The same function applies the same filtering and plotting rules to the carcinoma-versus-adenoma tables.
+I apply the same plotting rules to the carcinoma-adenoma comparison for Figure 4. Collagen fibril organization and extracellular-matrix organization are prominent, with contributions from collagen genes, FAP and POSTN. The pathway results add focal adhesion and cell-cycle activity. Compared with the adenoma-normal findings, this places greater emphasis on matrix remodeling and proliferation during the transition to carcinoma.
 
 ```{r figure-4, fig.width=14, fig.height=15, fig.cap="Figure 4. Functional enrichment for carcinoma versus adenoma."}
 plot_enrichment("CRC_vs_Adenoma")
@@ -187,7 +209,9 @@ plot_enrichment("CRC_vs_Adenoma")
 
 # Figure 5A: Progression-Associated Protein Network {#figure-5a}
 
-The archived network contains 29 nodes and 61 edges. I display the original STRING export with its protein thumbnails and colored evidence channels. The Python analysis recomputes centrality and observed proximity distances from the archived inputs.
+I use STRING to ask whether the 29 progression-associated proteins share functional relationships. The protein network contains 29 nodes and 61 associations; my manuscript reports 28 expected associations and PPI enrichment P = 2.99 x 10^-8. This connects the individual expression changes into a biological network and helps identify proteins for structural follow-up. The Python script recalculates centrality from the archived edges and checks the observed compound-disease distances against the saved results.
+
+I use the original STRING export for Figure 5A. It retains the website's colored protein nodes, structure thumbnails and evidence-channel lines. Its 29 node labels and 61 edges match the archived analysis tables. The display script composites the original transparent image onto white and checks the archived SVG against those tables.
 
 ```{r figure-5a, fig.cap="Figure 5A. Original STRING protein network: 29 nodes and 61 edges."}
 network_log <- system2(python, c("scripts/python/network_analysis.py", "--mode", "validate"),
@@ -201,6 +225,8 @@ knitr::include_graphics("figures/reproduced/network/string_native/progression_pp
 ```
 
 # Figure 5B: Protein Centrality {#figure-5b}
+
+I compare degree, betweenness and closeness for the ten highest-degree proteins. Degree counts direct connections; betweenness and closeness describe each protein's position within its connected component. MYC and CXCL8 each have 13 connections, the highest degree in this network. ADH1C has seven. These results later contribute to the choice of CXCL8 and ADH1C for docking, together with the availability of experimental structures.
 
 ```{r figure-5b, fig.width=11, fig.height=5.2, fig.cap="Figure 5B. Degree, betweenness and closeness of the ten highest-degree proteins."}
 top <- nodes[order(-nodes$degree, -nodes$betweenness, nodes$name), ][1:10, ]
@@ -219,7 +245,9 @@ centrality
 
 # Figure 6A: Network Proximity {#figure-6a}
 
-Observed distances are recomputed using the archived mapping of 24 disease nodes. Historical random-distribution moments reproduce the saved Z scores. The original expression analysis retains all 29 progression-associated genes.
+I examine whether the recorded targets of a compound lie unusually close to the disease-associated proteins in the human interactome. This links the progression-associated expression results to candidate compounds while allowing a compound to act through neighboring proteins. The expression analysis above retains 29 genes, and the archived proximity calculation maps 24 disease nodes into that interactome. I recalculate the observed distances and recover the historical Z scores from the saved null-distribution means and standard deviations.
+
+Figure 6A shows the closest-distance Z scores for all 66 recorded entries. The dashed lines mark Z = -1.96 and Z = 1.96.
 
 ```{r figure-6a, fig.width=10, fig.height=4.6, fig.cap="Figure 6A. Closest-distance Z scores across 66 recorded compound entries."}
 all_records <- read.csv("results/network/proximity_all_66_records.csv")
@@ -237,7 +265,9 @@ distribution
 
 # Figure 6B: Prioritized Polyphenols {#figure-6b}
 
-The 66 name entries represent 65 PubChem identities. Eleven unique identities pass Z < -1.96; the ten highest-ranked identities are shown here.
+The 66 recorded names correspond to 65 PubChem identities. Eleven identities fall below Z = -1.96. I rank the unique identities by the closest-distance Z score and retain the first ten.
+
+Kaempferol is the highest-ranked compound, with a closest-distance Z score of approximately -4.02. Its recorded targets are closer to the disease-associated proteins than expected under the archived randomization model. In Figure 6B, the horizontal position gives -Z, and the point size gives the number of mapped targets. The labels retain the signed Z scores. I carry the ten highest-ranked unique identities forward to chemical characterization and docking, linking the structural assessment to a defined network screen.
 
 ```{r figure-6b, fig.width=11, fig.height=6.5, fig.cap="Figure 6B. The ten highest-ranked compound identities."}
 top10 <- read.csv("results/network/top10_candidates.csv")
@@ -258,7 +288,7 @@ lollipop
 
 # Figure 7: Chemical Structures {#figure-7}
 
-The Python script assembles the cached PubChem depictions by compound identifier. [Structure assembly source](https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/scripts/build_chemical_structures.py).
+I use the PubChem identifiers to assemble Figure 7 from the cached chemical depictions. This step runs the [structure-assembly script](https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/scripts/build_chemical_structures.py) and displays the image it creates.
 
 ```{r figure-7, fig.cap="Figure 7. Cached PubChem structures for the ten prioritized compounds."}
 candidates <- read.csv("results/network/top10_candidates.csv")
@@ -271,7 +301,7 @@ knitr::include_graphics("figures/reproduced/chemistry/figure_07_compound_structu
 
 # Figure 8: Compound-Associated Target Networks {#figure-8}
 
-The target networks use cached human STRING v12.0 functional associations with a combined score cutoff of 0.400 and no added neighbors. I display each network separately using its native STRING image. The images and request parameters are cached for offline use.
+I use cached human STRING 12.0 responses to reconstruct associations among each compound's recorded targets. The query uses functional associations, a combined score cutoff of 0.400, and no added neighbors. I retain native STRING images and check their node and edge sets against the cached data. I display each network separately so its labels and protein thumbnails remain readable. Isolated targets are retained, and the images and request parameters are cached for offline use.
 
 ```{r figure-8, fig.cap=paste0("Figure 8. ", compound_info$display_name, ": native STRING target network.")}
 string_log <- system2(python, c("scripts/python/fetch_string_compounds.py", "--offline"),
@@ -286,7 +316,30 @@ knitr::include_graphics(compound_images)
 
 # Table 5: Docking Scores {#table-5}
 
-The workbook contains 10 primary compounds and one supplementary punicalagin structure, each evaluated against ADH1C (1HT0) and the CXCL8-Fab receptor system (6WZM).
+I use docking to examine possible compound poses in experimentally resolved receptor structures after network prioritization. All ten prioritized compounds were docked against both receptor systems. The original workbook also includes one supplementary punicalagin structure record. The choice of receptors and the choice of the two representative compound-receptor figures follow separate criteria, described below.
+
+## Why I Selected CXCL8 and ADH1C
+
+I selected these two proteins because they belong to the 29-gene progression-associated set, are relatively well connected in its PPI network, and have experimentally determined human protein structures available for receptor preparation. CXCL8 has 13 connections and ADH1C has seven, as reported in Section 3.5 of my manuscript. Their expression patterns also connect the structural analysis to the study's findings: CXCL8 increases across the sequential comparisons, while ADH1C decreases with the loss of differentiated metabolic functions.
+
+## Why I Used These PDB Structures
+
+I used the X-ray crystal structures [6WZM](https://www.rcsb.org/structure/6WZM) for CXCL8 and [1HT0](https://www.rcsb.org/structure/1HT0) for ADH1C. They provide experimentally resolved atomic coordinates at 2.28 and 2.00 angstrom resolution, respectively. Their deposited resolution and refinement statistics document the structural quality supporting receptor preparation.
+
+| Structural feature | CXCL8 receptor system: 6WZM | ADH1C receptor system: 1HT0 |
+|:--|:--|:--|
+| Experimental method | X-ray diffraction | X-ray diffraction |
+| Resolution | 2.28 angstrom | 2.00 angstrom |
+| Depositor R-work / R-free | 0.187 / 0.229 | 0.193 / 0.231 |
+| Protein represented | Human CXCL8 bound to an antibody Fab | Human ADH1C gamma-2 |
+| Deposited components | CXCL8 chains E/F; Fab heavy chains A/C and light chains B/D | ADH1C chains A/B, two NAD molecules and four zinc ions |
+| Receptor preparation in my manuscript | Complete A-F protein assembly used | NAD and zinc removed during preparation |
+
+The chain composition and preparation define the docking systems. In 6WZM, the archived search box is centered at the CXCL8-Fab interface, near the crystallographic PG4 site. In 1HT0, it is centered at the crystallographic NAD-binding region of chain A. I retain those settings in the [docking record](https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/docs/docking-provenance.md), so the images and scores can be read in the context of the receptor actually used. Structural statistics in the table are the depositor values in the linked RCSB entries and the preserved PDB headers.
+
+## Scores for the Full Compound Set
+
+I read the original workbook directly to rebuild Table 5. It contains the ten primary compound records and the supplementary structure against both receptors, rather than only the two pairs shown in Figure 9.
 
 ```{r table-5}
 docking <- run_docking(root)
@@ -296,6 +349,8 @@ knitr::kable(docking$scores[, c("compound", "pubchem_cid", "record_type", "ADH1C
 ```
 
 ## Docking Score Plot {#docking-score-plot}
+
+I plot both receptor systems on the same score scale and compare compounds within each receptor. Phloretin has the most favorable primary-compound score in 6WZM (-6.1 kcal/mol), followed by trans-resveratrol (-5.9). Kaempferol leads in 1HT0 (-8.3 kcal/mol), followed by quercetin (-8.2). The supplementary punicalagin structure is marked separately, and the recorded positive score is retained.
 
 ```{r docking-score-plot, fig.width=11.5, fig.height=7.5, fig.cap="Docking scores reconstructed from the original workbook."}
 records <- docking$scores
@@ -326,7 +381,11 @@ score_plot
 
 # Figure 9: Original Docking Images {#figure-9}
 
-I use the four original PNG panels embedded in my docking presentation. They show phloretin in the 6WZM receptor system and kaempferol in 1HT0, matching the four panels of submitted Figure 9. Each image is extracted without redrawing, cropping or rescaling its stored pixels.
+I show phloretin-6WZM and kaempferol-1HT0 because each has the most favorable Vina score among the ten primary compounds in its receptor system. Kaempferol also ranks first in network proximity, connecting the leading network candidate with the strongest docking score for ADH1C. The four original panels below show the three-dimensional pose and two-dimensional contacts for each selected pair.
+
+## Figure 9A: Phloretin in the 6WZM Receptor System
+
+I extract the four original PNG panels from my docking presentation and show each at its original resolution. These are the source images used in submitted Figure 9. In this first panel, phloretin lies within the predefined interface search region between CXCL8 chain F and Fab heavy chain C. It is the representative pose for the -6.1 kcal/mol result.
 
 ```{r figure-9a, fig.cap="Figure 9A. Original three-dimensional phloretin / 6WZM image."}
 panel_log <- system2(python, "scripts/extract_docking_panels.py", stdout = TRUE, stderr = TRUE)
@@ -334,17 +393,35 @@ if (!is.null(attr(panel_log, "status"))) stop(paste(panel_log, collapse = "\n"))
 knitr::include_graphics("figures/original/docking/phloretin_6wzm_3d.png")
 ```
 
+## Figure 9B: Phloretin Interaction Map
+
+The original interaction diagram identifies contacts on both sides of the interface. My manuscript describes a hydrogen bond with Tyr105 of Fab chain C, and contacts with Tyr13, Phe21 and Leu43 of CXCL8 chain F. The diagram also annotates an unfavorable donor-donor geometry involving Arg47. These annotations describe the geometry of the displayed pose.
+
 ```{r figure-9b, fig.cap="Figure 9B. Original two-dimensional phloretin interaction map."}
 knitr::include_graphics("figures/original/docking/phloretin_6wzm_interactions.png")
 ```
+
+## Figure 9C: Kaempferol in ADH1C
+
+Kaempferol occupies the chain-A pocket in the prepared 1HT0 receptor, with a best-mode score of -8.3 kcal/mol. I selected this view because kaempferol led the ADH1C docking scores and the network-proximity ranking. The original three-dimensional panel places the ligand within the receptor used for that calculation.
 
 ```{r figure-9c, fig.cap="Figure 9C. Original three-dimensional kaempferol / 1HT0 image."}
 knitr::include_graphics("figures/original/docking/kaempferol_1ht0_3d.png")
 ```
 
+## Figure 9D: Kaempferol Interaction Map
+
+The original interaction map annotates a pi-cation contact with Arg47, a pi-sigma contact with Val203 and a carbon-hydrogen-bond contact with Gly201. Additional residues contribute van der Waals contacts, and Arg369 has an unfavorable donor-donor geometry. This gives a residue-level description of the representative pose reported in Section 3.5. The source PPT and four original PNG files are linked in the [docking record](https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/docs/docking-provenance.md).
+
 ```{r figure-9d, fig.cap="Figure 9D. Original two-dimensional kaempferol interaction map."}
 knitr::include_graphics("figures/original/docking/kaempferol_1ht0_interactions.png")
 ```
+
+# What I Take from These Results {#interpretation}
+
+The expression analyses suggest that inflammatory recruitment and loss of mature epithelial functions are already established in adenomas. The carcinoma comparison adds matrix organization, adhesion and cell-cycle changes. The 29 genes that change in the same direction across both comparisons connect these tissue-stage findings to a focused protein network and a defined compound screen.
+
+Kaempferol is the clearest candidate to carry forward from this analysis: it ranks first in network proximity and has the most favorable ADH1C docking score among the ten primary compounds. Phloretin provides the complementary structural example for the CXCL8-Fab system because it leads that receptor's scores. The next experimental question is whether these compounds engage the relevant targets and alter progression-associated expression or phenotypes in normal colon, adenoma and CRC models. I discuss this route from computational prioritization to target-engagement and organoid experiments in Section 4 of my manuscript.
 
 # Result Tables and Verification {#verification}
 
