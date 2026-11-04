@@ -1,5 +1,6 @@
 *.R text eol=lf
 *.Rmd text eol=lf
+*.ipynb text eol=lf
 *.py text eol=lf
 *.csv text eol=lf
 *.tsv text eol=lf

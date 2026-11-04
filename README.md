@@ -1,74 +1,82 @@
 # Colorectal adenoma-carcinoma progression and polyphenol prioritization
 
-## Analysis Notebook
+Hiu Mai
 
-**[Open the HTML notebook](https://hiuuuuu33.github.io/colorectal-polyphenol-research/) | [View Analysis.Rmd](https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/Analysis.Rmd)**
+**[Read the Jupyter notebook](https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/Analysis.ipynb) | [Open the HTML version](https://hiuuuuu33.github.io/colorectal-polyphenol-research/)**
 
-Each figure is paired with its analysis and plotting code. Code is displayed above the corresponding figure by default.
+I wanted to understand which gene-expression changes persist as normal colorectal tissue progresses through adenoma to early cancer, and whether those changes could help prioritize polyphenols for further study. I analyzed the three tissue groups, identified genes that changed in the same direction across both transitions, and compared their positions in the human protein interaction network with recorded polyphenol targets.
 
-Research portfolio of **Hiu Mai**, accompanying *Network-based discovery of bioactive polyphenols based on transcriptomic changes across the colorectal adenoma-carcinoma sequence*.
+This repository accompanies my manuscript, *Network-based discovery of bioactive polyphenols based on transcriptomic changes across the colorectal adenoma-carcinoma sequence*. I have included the data, my original analysis files, figures and final manuscript, together with an executable notebook. The notebook follows the analysis one step at a time: a short explanation, the code, then its output.
 
-The project examines gene-expression changes across normal colorectal tissue, adenoma and early colorectal cancer, then connects a progression-associated gene set to polyphenol targets in the human interactome. This repository brings together the final manuscript, research inputs, original analysis files, an executable R Markdown report, and figure-by-figure provenance.
-
-## Read the project
-
-- [HTML analysis notebook](https://hiuuuuu33.github.io/colorectal-polyphenol-research/): analysis narrative, visible code, corresponding figures, tables and checks.
-- [Final submitted manuscript](manuscript/submitted-manuscript.pdf): the author's final PDF, preserved unchanged.
-- [R Markdown source](Analysis.Rmd): the executable notebook at the repository root.
-- [Figure index](docs/figure-index.md): manuscript figure numbers, inputs and reproduction scripts.
-- [Data and file provenance](docs/provenance.md): original sources, archived files and reconstruction details.
-
-## Results at a Glance
+## Main results
 
 | Analysis | Result |
 |:--|:--|
 | Expression dataset | GSE228012; 33 samples, 11 per tissue group |
 | Differential expression | 725 adenoma-normal; 312 cancer-adenoma; 1,544 cancer-normal |
-| Progression-associated gene set | 29 genes: 8 up/up and 21 down/down |
-| Compound screen | 66 recorded names, 65 PubChem identities; 11 unique identities below the original Z-score cutoff |
+| Progression-associated genes | 29 genes: 8 up/up and 21 down/down |
+| Compound screen | 66 recorded names representing 65 PubChem identities; 11 unique identities below the original Z-score cutoff |
 | Highest-ranked candidate | Kaempferol |
-| Structural assessment | Archived scores for 10 primary compounds and one supplementary structure against two receptor systems |
+| Docking records | 10 primary compounds and one supplementary structure against two receptor systems |
 
-The expression results are recomputed from the processed FPKM matrix. Protein-network topology and observed proximity distances are recomputed from archived inputs. Functional-enrichment figures use frozen original result tables; the historical compound ranking uses archived random-distribution moments. Docking score summaries are rebuilt from the original workbook, while pose illustrations are preserved from the submitted manuscript. The report records these execution paths beside the relevant results.
+In the notebook, I recompute expression results from the processed FPKM matrix, protein centrality from the archived network, and observed distances between disease proteins and compound targets. For enrichment plots, I use the complete original GO and KEGG result tables. The historical compound ranking uses the saved random-distribution moments. I rebuild the docking score table from the original workbook and retain the pose illustration from my submitted manuscript.
 
-## Repository Layout
+## Files to start with
+
+- [Analysis.ipynb](Analysis.ipynb): the Jupyter notebook, with code and saved outputs.
+- [HTML notebook](https://hiuuuuu33.github.io/colorectal-polyphenol-research/): a browser-readable copy of the analysis.
+- [Final manuscript](manuscript/submitted-manuscript.pdf): my submitted PDF, unchanged.
+- [Analysis.Rmd](Analysis.Rmd): an alternative R Markdown version of the analysis.
+- [Figure index](docs/figure-index.md): the inputs and scripts behind each manuscript figure.
+- [Data and code provenance](docs/provenance.md): where the files came from and how I reconstructed the archived analyses.
 
 ```text
-Analysis.Rmd            Executable notebook pairing code with figures
+Analysis.ipynb          Jupyter notebook with explanations, code and outputs
+Analysis.Rmd            R Markdown source
 manuscript/             Final PDF and extracted text
-report/                 Notebook stylesheet
-docs/                   Rendered HTML report and documentation
-scripts/R/              Expression, enrichment, network and docking modules
-scripts/python/         Network reconstruction and fresh randomization
-scripts/                Rendering, dependencies and asset preparation
 data/                   Expression, enrichment, network, chemical and docking inputs
-results/                Regenerated tables, numerical checks and environment records
-figures/submitted/      Nine figures extracted from the final submitted PDF
-figures/original/       Original plot files and editable figure sources
-figures/reproduced/     Figures generated by the executable workflow
+scripts/R/              Expression, enrichment, network and docking modules
+scripts/python/         Network analysis and fresh randomization
+scripts/                Rendering, dependencies and figure preparation
+results/                Result tables, numerical checks and environment records
+figures/submitted/      Nine figures extracted from my final PDF
+figures/original/       Original plots and editable figure sources
+figures/reproduced/     Figures generated by the analysis modules
 figures/notebook/       Plot outputs generated by Analysis.Rmd
-archive/                Original R scripts, result tables and saved R workspaces
-upstream/               Credited third-party network implementation and its license
+archive/                Original R scripts, exported tables and R workspaces
+upstream/               Third-party network code and its license
+environment/            Dependencies and tested package versions
 metadata/               File manifests and SHA-256 checksums
+docs/                   HTML report and supporting documentation
+report/                 Notebook and R Markdown stylesheets
 ```
 
-Earlier research exports are retained under `archive/` for provenance. The executable workflow selects its inputs explicitly from `data/`, including the 66-entry network output used by the final manuscript. Duplicate ZIP archives, downloaded reference-article PDFs, operating-system files, unrelated personal documents and intermediate manuscript drafts are outside this public research package.
+I kept earlier exports in `archive/` and selected the inputs used by the final analysis under `data/`, including the 66-entry network output. Duplicate ZIP files, downloaded reference articles, system files, unrelated personal documents and intermediate manuscript drafts remain outside this public repository.
 
-## Reproduce the Report
+## Run the analysis
 
-Requirements: R 4.4 or later, Python 3.12 or later, and Pandoc. RStudio includes Pandoc. The tested package versions are recorded in [the environment files](environment/).
+The notebook uses an R kernel, with R 4.4 or later and Python 3.12 or later. Tested package versions are listed in [environment/](environment/).
 
-From the repository root:
+From the repository root, install the dependencies and open the notebook:
 
 ```bash
 Rscript scripts/install_dependencies.R
-python3 -m pip install -r environment/requirements.txt
-Rscript scripts/render_report.R
+python3 -m pip install -r environment/requirements-notebook.txt
+Rscript scripts/install_notebook_kernel.R
+python3 -m jupyterlab Analysis.ipynb
 ```
 
-The render command executes `Analysis.Rmd` and writes `docs/index.html`. The HTML embeds its images and scripts, so the rendered file can be read offline. All core inputs, cached PubChem depictions and STRING responses are included; the default report build requires no database queries. Set `PYTHON` to a Python executable when the default `python3` does not use the intended environment.
+To execute every cell and export the HTML version:
 
-Individual modules can also be run separately:
+```bash
+python3 scripts/render_notebook.py
+```
+
+This updates the saved outputs in `Analysis.ipynb` and writes `docs/index.html`. The HTML contains its images and can be read offline. I included the input files, cached PubChem depictions and STRING responses, so the default build runs without querying those databases. Set `PYTHON` to the Python executable you want the R code to use.
+
+The R Markdown version is also available. With Pandoc installed, or through RStudio, run `Rscript scripts/render_report.R` to write `docs/rmarkdown.html`.
+
+The analysis modules can also run separately:
 
 ```bash
 Rscript scripts/R/01_transcriptomics.R
@@ -80,24 +88,22 @@ Rscript scripts/R/04_docking.R
 python3 scripts/build_chemical_structures.py
 ```
 
-For a new seeded null distribution:
+To generate a fresh seeded null distribution:
 
 ```bash
 python3 scripts/python/network_analysis.py --mode randomize --n-random 1000
 ```
 
-Fresh randomization is separate from the default historical reconstruction. Its output records the seed, new null vectors and run metadata. The supplied original docking archive contains PDB structures, grids, scores and visualizations; prepared PDBQT inputs and output pose coordinates are needed to repeat the Vina search. See [docking provenance](docs/docking-provenance.md).
+That command saves the new null vectors, seed and run metadata separately from the historical ranking. The docking archive includes PDB structures, search grids, scores and visualizations. A new Vina search also requires the prepared PDBQT files and output pose coordinates listed in [the docking record](docs/docking-provenance.md).
 
-## Data Sources and Attribution
+## Sources
 
 - Expression data: [GEO GSE228012](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228012), associated with [Lin et al.](https://doi.org/10.1002/advs.202410058).
-- Network framework and compound-target resource: [do Valle et al. (2021)](https://doi.org/10.1038/s43016-021-00243-7), [upstream code](https://github.com/italodovalle/polyphenols).
+- Network framework and compound-target resource: [do Valle et al. (2021)](https://doi.org/10.1038/s43016-021-00243-7), with [their original code](https://github.com/italodovalle/polyphenols).
 - Protein associations: [STRING](https://string-db.org/), using archived progression-network edges and cached version-12.0 compound-network responses.
 - Chemical identifiers and depictions: [PubChem](https://pubchem.ncbi.nlm.nih.gov/).
 - Structural records: [PDB 1HT0](https://www.rcsb.org/structure/1HT0) and [PDB 6WZM](https://www.rcsb.org/structure/6WZM).
 
-The upstream polyphenol code retains its original MIT license and attribution. Third-party datasets and structural records retain their source terms. Original manuscript and research materials are attributed to Hiu Mai. See [third-party notices](THIRD_PARTY_NOTICES.md).
+I retained the upstream polyphenol code's MIT license and attribution. Third-party data and structural records retain their source terms, as listed in [the third-party notices](THIRD_PARTY_NOTICES.md).
 
-## Authorship and Repository Preparation
-
-The submitted manuscript describes the author's research contributions, mentor guidance and use of computational assistance. This repository was organized from the author's existing project directory in November 2026. Original research files remain separate from the new scripts that reconstruct and verify the archived analyses. Codex assisted with repository organization, reproduction wrappers and report preparation; those additions are documented in [provenance](docs/provenance.md).
+I organized this repository from my existing project files in November 2026, with Codex assistance for the reproduction scripts, notebook and documentation. My original files are preserved separately from those additions. My submitted manuscript describes my research contributions, mentor guidance and use of computational assistance; [the provenance record](docs/provenance.md) describes the repository preparation.

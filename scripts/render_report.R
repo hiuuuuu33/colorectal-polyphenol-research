@@ -1,4 +1,4 @@
-# Run the R Markdown analysis and save the self-contained HTML report in docs/.
+# Run the R Markdown analysis and save its HTML version as docs/rmarkdown.html.
 
 args <- commandArgs(trailingOnly = TRUE)
 root <- if (length(args)) args[1] else "."
@@ -11,8 +11,8 @@ if (!rmarkdown::pandoc_available()) {
 dir.create(file.path(root, "docs"), showWarnings = FALSE)
 Sys.setenv(RESEARCH_REPO_ROOT = root)
 rmarkdown::render(file.path(root, "Analysis.Rmd"),
-                  output_file = "index.html", output_dir = file.path(root, "docs"),
+                  output_file = "rmarkdown.html", output_dir = file.path(root, "docs"),
                   knit_root_dir = root, envir = new.env(parent = globalenv()),
                   clean = TRUE, quiet = FALSE)
 file.create(file.path(root, "docs", ".nojekyll"))
-message("Report ready: ", file.path(root, "docs", "index.html"))
+message("Report ready: ", file.path(root, "docs", "rmarkdown.html"))

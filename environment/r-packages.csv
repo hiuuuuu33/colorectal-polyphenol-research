@@ -9,3 +9,5 @@
 "readxl","1.4.5"
 "jsonlite","2.0.0"
 "digest","0.6.37"
+"IRkernel","1.3.2"
+"IRdisplay","1.1"

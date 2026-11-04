@@ -2,7 +2,7 @@
 
 The reference is the unchanged 29-page `manuscript/submitted-manuscript.pdf`. All nine embedded figures are preserved in `figures/submitted/`.
 
-The [HTML notebook](https://hiuuuuu33.github.io/colorectal-polyphenol-research/) displays the executable code immediately before each figure. Its source is [Analysis.Rmd](../Analysis.Rmd) at the repository root; R plotting chunks save their images in `figures/notebook/`.
+The [HTML notebook](https://hiuuuuu33.github.io/colorectal-polyphenol-research/) displays the executable code immediately before each figure. Its source is [Analysis.ipynb](../Analysis.ipynb) at the repository root, with executed R cells and embedded PNG outputs. [Analysis.Rmd](../Analysis.Rmd) is retained as an alternative version; its R plotting chunks save images in `figures/notebook/`.
 
 | Submitted item | PDF page | Inputs | Executable companion | Reproduction path |
 |:--|--:|:--|:--|:--|
