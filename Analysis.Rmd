@@ -187,34 +187,17 @@ plot_enrichment("CRC_vs_Adenoma")
 
 # Figure 5A: Progression-Associated Protein Network {#figure-5a}
 
-The archived network contains 29 nodes and 61 edges. The Python analysis recomputes centrality and observed proximity distances from the archived inputs.
+The archived network contains 29 nodes and 61 edges. I display the original STRING export with its protein thumbnails and colored evidence channels. The Python analysis recomputes centrality and observed proximity distances from the archived inputs.
 
-```{r figure-5a, fig.width=11, fig.height=6.8, fig.cap="Figure 5A. Protein network reconstructed from the archived STRING edges."}
+```{r figure-5a, fig.cap="Figure 5A. Original STRING protein network: 29 nodes and 61 edges."}
 network_log <- system2(python, c("scripts/python/network_analysis.py", "--mode", "validate"),
                         stdout = TRUE, stderr = TRUE)
 if (!is.null(attr(network_log, "status"))) stop(paste(network_log, collapse = "\n"))
 nodes <- read.csv("results/network/ppi_centrality_recalculated.csv")
-positions <- read.csv("results/network/ppi_layout.csv")
-nodes <- merge(nodes, positions, by = "name", sort = FALSE)
-edges <- read.delim("data/network/string_interactions_short.tsv", check.names = FALSE)
-a <- match(edges[[1]], nodes$name)
-b <- match(edges[[2]], nodes$name)
-segments <- data.frame(x = nodes$x[a], y = nodes$y[a], xend = nodes$x[b], yend = nodes$y[b])
-network <- ggplot() +
-  geom_segment(data = segments, aes(x, y, xend = xend, yend = yend),
-                color = "#AAB4B8", linewidth = 0.5, alpha = 0.7) +
-  geom_point(data = nodes, aes(x, y, size = degree, fill = degree),
-              shape = 21, color = "white", stroke = 0.6) +
-  geom_text_repel(data = nodes, aes(x, y, label = name), seed = 2026,
-                   size = 3.3, max.overlaps = Inf, min.segment.length = 0, box.padding = 0.3) +
-  scale_fill_gradient(low = "#AFD5D0", high = "#157D80") +
-  scale_size_continuous(range = c(3, 9), guide = "none") +
-  scale_x_continuous(expand = expansion(mult = 0.15)) +
-  labs(title = "Progression-associated protein network", fill = "Degree") +
-  coord_cartesian(clip = "off") + theme_void(base_size = 11) +
-  theme(plot.title = element_text(face = "bold", size = 13),
-         plot.margin = margin(18, 24, 18, 24))
-network
+string_visual_log <- system2(python, c("scripts/build_string_visuals.py", "--offline"),
+                              stdout = TRUE, stderr = TRUE)
+if (!is.null(attr(string_visual_log, "status"))) stop(paste(string_visual_log, collapse = "\n"))
+knitr::include_graphics("figures/reproduced/network/string_native/progression_ppi_string.png")
 ```
 
 # Figure 5B: Protein Centrality {#figure-5b}
@@ -288,49 +271,17 @@ knitr::include_graphics("figures/reproduced/chemistry/figure_07_compound_structu
 
 # Figure 8: Compound-Associated Target Networks {#figure-8}
 
-The target networks use cached human STRING v12.0 functional associations with a combined score cutoff of 0.400 and no added neighbors. The offline command rebuilds layouts and summary tables from those cached responses.
+The target networks use cached human STRING v12.0 functional associations with a combined score cutoff of 0.400 and no added neighbors. I display each network separately using its native STRING image. The images and request parameters are cached for offline use.
 
-```{r figure-8, fig.width=11, fig.height=16, fig.cap="Figure 8. Compound-associated networks reconstructed from cached STRING responses."}
+```{r figure-8, fig.cap=paste0("Figure 8. ", compound_info$display_name, ": native STRING target network.")}
 string_log <- system2(python, c("scripts/python/fetch_string_compounds.py", "--offline"),
                        stdout = TRUE, stderr = TRUE)
 if (!is.null(attr(string_log, "status"))) stop(paste(string_log, collapse = "\n"))
-layouts <- read.csv("results/network/compound_string_layouts.csv")
 compound_info <- read.csv("results/network/compound_string_summary.csv")
-compound_edges <- list()
-for (i in seq_len(nrow(compound_info))) {
-  item <- compound_info[i, ]
-  dat <- read.delim(item$edges_file, check.names = FALSE)
-  pos <- layouts[layouts$chemical == item$chemical, ]
-  dat <- dat[dat$stringId_A %in% pos$string_id & dat$stringId_B %in% pos$string_id, ]
-  if (nrow(dat)) {
-    ai <- match(dat$stringId_A, pos$string_id)
-    bi <- match(dat$stringId_B, pos$string_id)
-    compound_edges[[i]] <- data.frame(chemical = item$chemical,
-                                     x = pos$x[ai], y = pos$y[ai],
-                                     xend = pos$x[bi], yend = pos$y[bi])
-  }
-}
-segment_data <- do.call(rbind, compound_edges)
-labels <- setNames(paste0(LETTERS[seq_len(nrow(compound_info))], ". ",
-                          compound_info$display_name), compound_info$chemical)
-layouts$chemical <- factor(layouts$chemical, levels = compound_info$chemical)
-segment_data$chemical <- factor(segment_data$chemical, levels = compound_info$chemical)
-compound_plot <- ggplot() +
-  geom_segment(data = segment_data, aes(x, y, xend = xend, yend = yend),
-                color = "#BAC5C8", linewidth = 0.22, alpha = 0.55) +
-  geom_point(data = layouts, aes(x, y, size = degree), color = "#157D80", alpha = 0.9) +
-  geom_text(data = layouts, aes(x, y, label = symbol), size = 1.7, vjust = -0.55,
-             check_overlap = TRUE) +
-  facet_wrap(~chemical, ncol = 2, labeller = labeller(chemical = labels)) +
-  scale_size_continuous(range = c(1, 3)) +
-  scale_x_continuous(expand = expansion(mult = 0.15)) +
-  scale_y_continuous(expand = expansion(mult = 0.18)) +
-  labs(title = "Recorded compound targets: STRING 12.0 functional associations") +
-  theme_void(base_size = 11) +
-  theme(legend.position = "none", strip.text = element_text(hjust = 0, face = "bold"),
-         panel.spacing = grid::unit(1.2, "lines"),
-         plot.title = element_text(size = 13, face = "bold", margin = margin(b = 15)))
-compound_plot
+compound_images <- file.path("figures/reproduced/network/string_native",
+                              paste0(gsub("[^[:alnum:]]", "", compound_info$chemical), "_preview.png"))
+stopifnot(all(file.exists(compound_images)))
+knitr::include_graphics(compound_images)
 ```
 
 # Table 5: Docking Scores {#table-5}
@@ -373,14 +324,26 @@ score_plot <- ggplot(score_data, aes(score, compound)) +
 score_plot
 ```
 
-# Figure 9: Submitted Docking Poses {#figure-9}
+# Figure 9: Original Docking Images {#figure-9}
 
-This is the submitted illustration of phloretin in the 6WZM receptor system and kaempferol in 1HT0. The code displays the preserved figure; a new Vina search requires the prepared PDBQT files and output pose coordinates listed in the [docking record](https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/docs/docking-provenance.md).
+I use the four original PNG panels embedded in my docking presentation. They show phloretin in the 6WZM receptor system and kaempferol in 1HT0, matching the four panels of submitted Figure 9. Each image is extracted without redrawing, cropping or rescaling its stored pixels.
 
-```{r figure-9, fig.cap="Figure 9. Docking-pose illustration preserved from the submitted manuscript."}
-pose_figure <- "figures/submitted/figure_09.png"
-stopifnot(file.exists(pose_figure))
-knitr::include_graphics(pose_figure)
+```{r figure-9a, fig.cap="Figure 9A. Original three-dimensional phloretin / 6WZM image."}
+panel_log <- system2(python, "scripts/extract_docking_panels.py", stdout = TRUE, stderr = TRUE)
+if (!is.null(attr(panel_log, "status"))) stop(paste(panel_log, collapse = "\n"))
+knitr::include_graphics("figures/original/docking/phloretin_6wzm_3d.png")
+```
+
+```{r figure-9b, fig.cap="Figure 9B. Original two-dimensional phloretin interaction map."}
+knitr::include_graphics("figures/original/docking/phloretin_6wzm_interactions.png")
+```
+
+```{r figure-9c, fig.cap="Figure 9C. Original three-dimensional kaempferol / 1HT0 image."}
+knitr::include_graphics("figures/original/docking/kaempferol_1ht0_3d.png")
+```
+
+```{r figure-9d, fig.cap="Figure 9D. Original two-dimensional kaempferol interaction map."}
+knitr::include_graphics("figures/original/docking/kaempferol_1ht0_interactions.png")
 ```
 
 # Result Tables and Verification {#verification}

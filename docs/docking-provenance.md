@@ -10,8 +10,8 @@ The submitted manuscript itself is unchanged.
 | Submitted item | Contents | Repository treatment |
 | --- | --- | --- |
 | Table 5 | Best-mode Vina scores for ten prioritized compounds and one supplementary punicalagin structure | Rebuilt directly from `data/docking/records/docking_results.xlsx` |
-| Figure 9A-B | Phloretin in the 6WZM CXCL8-Fab assembly; overall view and two-dimensional interaction map | Preserved in the final submitted PDF |
-| Figure 9C-D | Kaempferol in the 1HT0 ADH1C model; overall view and two-dimensional interaction map | Preserved in the final submitted PDF |
+| Figure 9A-B | Phloretin in the 6WZM CXCL8-Fab assembly; overall view and two-dimensional interaction map | Original PNG panels from slide 1, displayed separately in the notebook |
+| Figure 9C-D | Kaempferol in the 1HT0 ADH1C model; overall view and two-dimensional interaction map | Original PNG panels from slide 2, displayed separately in the notebook |
 | Additional repository plot | All 22 archived scores, separated by receptor system | Generated as `figures/reproduced/docking/docking_score_summary.png` and PDF |
 
 Figure 8 in the final submission contains the compound-associated target
@@ -31,10 +31,26 @@ the originals remain untouched.
 | `data/docking/records/docking_results.xlsx` | Original score workbook, Sheet1; Sheets2-3 are empty |
 | `data/docking/records/docking_results.pptx` | Archived visualization slides |
 | `data/docking/original_visualizations/*.png` | Four archived visualization exports, retained under original filenames |
+| `figures/original/docking/*.png` | Four original PNG media files extracted byte for byte from the archived PPT |
+| `metadata/docking_panels.csv` | Slide and media mapping, original dimensions and SHA-256 digests for the displayed panels |
 
-The archived PNGs and slide labels belong to the original project history. The
-final submitted Figure 9 is the figure of record for the submission; the older
-exports are retained for provenance and are not substituted for its panels.
+The notebook displays the four full-resolution PPT images corresponding to
+submitted Figure 9. Each image retains its original pixels and white background;
+the images have not been redrawn, cropped or rescaled on disk. The separate
+exports in `data/docking/original_visualizations/` include earlier views and
+remain archived with their original names.
+
+[Phloretin / 6WZM: 3D image](../figures/original/docking/phloretin_6wzm_3d.png) |
+[Interaction map](../figures/original/docking/phloretin_6wzm_interactions.png)
+
+[Kaempferol / 1HT0: 3D image](../figures/original/docking/kaempferol_1ht0_3d.png) |
+[Interaction map](../figures/original/docking/kaempferol_1ht0_interactions.png)
+
+To extract the original panels again:
+
+```sh
+python3 scripts/extract_docking_panels.py
+```
 
 ## Structural systems and recorded settings
 

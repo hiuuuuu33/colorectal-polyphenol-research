@@ -1,0 +1,151 @@
+{
+  "preview_processing": {
+    "maximum_long_edge_px": 2400,
+    "resampling": "Lanczos",
+    "palette_colors": 256,
+    "background": "white",
+    "small_network_trimming": "For networks of up to four nodes, crop to all nonwhite pixels and add 40 pixels of white padding on every side",
+    "full_resolution_rgb_preserved": true
+  },
+  "ppi": {
+    "image": "figures/reproduced/network/string_native/progression_ppi_string.png",
+    "notebook_image": "figures/reproduced/network/string_native/progression_ppi_string_preview.png",
+    "source": "figures/original/\u7f51\u7edc/string_hires_image.png",
+    "nodes": 29,
+    "edges": 61,
+    "nodes_match_archive": true,
+    "edges_match_archive": true
+  },
+  "compounds": [
+    {
+      "chemical": "kaempferol",
+      "display_name": "kaempferol",
+      "nodes": 38,
+      "edges": 161,
+      "image": "figures/reproduced/network/string_native/kaempferol.png",
+      "notebook_image": "figures/reproduced/network/string_native/kaempferol_preview.png",
+      "source_svg": "data/network/string_visuals/kaempferol.svg",
+      "source_png": "data/network/string_visuals/kaempferol.png",
+      "request_metadata": "data/network/string_visuals/kaempferol.json",
+      "nodes_match_archive": true,
+      "edges_match_archive": true
+    },
+    {
+      "chemical": "4-methylcatechol",
+      "display_name": "4-methylcatechol",
+      "nodes": 2,
+      "edges": 0,
+      "image": "figures/reproduced/network/string_native/4methylcatechol.png",
+      "notebook_image": "figures/reproduced/network/string_native/4methylcatechol_preview.png",
+      "source_svg": "data/network/string_visuals/4methylcatechol.svg",
+      "source_png": "data/network/string_visuals/4methylcatechol.png",
+      "request_metadata": "data/network/string_visuals/4methylcatechol.json",
+      "nodes_match_archive": true,
+      "edges_match_archive": true
+    },
+    {
+      "chemical": "quercetin",
+      "display_name": "quercetin",
+      "nodes": 215,
+      "edges": 1560,
+      "image": "figures/reproduced/network/string_native/quercetin.png",
+      "notebook_image": "figures/reproduced/network/string_native/quercetin_preview.png",
+      "source_svg": "data/network/string_visuals/quercetin.svg",
+      "source_png": "data/network/string_visuals/quercetin.png",
+      "request_metadata": "data/network/string_visuals/quercetin.json",
+      "nodes_match_archive": true,
+      "edges_match_archive": true
+    },
+    {
+      "chemical": "punicalagin",
+      "display_name": "punicalagin",
+      "nodes": 1,
+      "edges": 0,
+      "image": "figures/reproduced/network/string_native/punicalagin.png",
+      "notebook_image": "figures/reproduced/network/string_native/punicalagin_preview.png",
+      "source_svg": "data/network/string_visuals/punicalagin.svg",
+      "source_png": "data/network/string_visuals/punicalagin.png",
+      "request_metadata": "data/network/string_visuals/punicalagin.json",
+      "nodes_match_archive": true,
+      "edges_match_archive": true
+    },
+    {
+      "chemical": "umbelliferone",
+      "display_name": "umbelliferone",
+      "nodes": 3,
+      "edges": 1,
+      "image": "figures/reproduced/network/string_native/umbelliferone.png",
+      "notebook_image": "figures/reproduced/network/string_native/umbelliferone_preview.png",
+      "source_svg": "data/network/string_visuals/umbelliferone.svg",
+      "source_png": "data/network/string_visuals/umbelliferone.png",
+      "request_metadata": "data/network/string_visuals/umbelliferone.json",
+      "nodes_match_archive": true,
+      "edges_match_archive": true
+    },
+    {
+      "chemical": "esculetin",
+      "display_name": "esculetin",
+      "nodes": 1,
+      "edges": 0,
+      "image": "figures/reproduced/network/string_native/esculetin.png",
+      "notebook_image": "figures/reproduced/network/string_native/esculetin_preview.png",
+      "source_svg": "data/network/string_visuals/esculetin.svg",
+      "source_png": "data/network/string_visuals/esculetin.png",
+      "request_metadata": "data/network/string_visuals/esculetin.json",
+      "nodes_match_archive": true,
+      "edges_match_archive": true
+    },
+    {
+      "chemical": "2,3-dihydroxybenzoic acid",
+      "display_name": "2,3-dihydroxybenzoic acid",
+      "nodes": 1,
+      "edges": 0,
+      "image": "figures/reproduced/network/string_native/23dihydroxybenzoicacid.png",
+      "notebook_image": "figures/reproduced/network/string_native/23dihydroxybenzoicacid_preview.png",
+      "source_svg": "data/network/string_visuals/23dihydroxybenzoicacid.svg",
+      "source_png": "data/network/string_visuals/23dihydroxybenzoicacid.png",
+      "request_metadata": "data/network/string_visuals/23dihydroxybenzoicacid.json",
+      "nodes_match_archive": true,
+      "edges_match_archive": true
+    },
+    {
+      "chemical": "resveratrol",
+      "display_name": "trans-resveratrol",
+      "nodes": 61,
+      "edges": 232,
+      "image": "figures/reproduced/network/string_native/resveratrol.png",
+      "notebook_image": "figures/reproduced/network/string_native/resveratrol_preview.png",
+      "source_svg": "data/network/string_visuals/resveratrol.svg",
+      "source_png": "data/network/string_visuals/resveratrol.png",
+      "request_metadata": "data/network/string_visuals/resveratrol.json",
+      "nodes_match_archive": true,
+      "edges_match_archive": true
+    },
+    {
+      "chemical": "1,4-naphtoquinone",
+      "display_name": "1,4-naphthoquinone",
+      "nodes": 4,
+      "edges": 1,
+      "image": "figures/reproduced/network/string_native/14naphtoquinone.png",
+      "notebook_image": "figures/reproduced/network/string_native/14naphtoquinone_preview.png",
+      "source_svg": "data/network/string_visuals/14naphtoquinone.svg",
+      "source_png": "data/network/string_visuals/14naphtoquinone.png",
+      "request_metadata": "data/network/string_visuals/14naphtoquinone.json",
+      "nodes_match_archive": true,
+      "edges_match_archive": true
+    },
+    {
+      "chemical": "phloretin",
+      "display_name": "phloretin",
+      "nodes": 2,
+      "edges": 1,
+      "image": "figures/reproduced/network/string_native/phloretin.png",
+      "notebook_image": "figures/reproduced/network/string_native/phloretin_preview.png",
+      "source_svg": "data/network/string_visuals/phloretin.svg",
+      "source_png": "data/network/string_visuals/phloretin.png",
+      "request_metadata": "data/network/string_visuals/phloretin.json",
+      "nodes_match_archive": true,
+      "edges_match_archive": true
+    }
+  ]
+}

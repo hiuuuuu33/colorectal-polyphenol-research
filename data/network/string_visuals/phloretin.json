@@ -1,0 +1,20 @@
+{
+  "api_base": "https://version-12-0.string-db.org/api",
+  "parameters": {
+    "identifiers": "9606.ENSP00000405330\r9606.ENSP00000416293",
+    "species": 9606,
+    "required_score": 400,
+    "network_type": "functional",
+    "network_flavor": "confidence",
+    "add_nodes": 0,
+    "add_color_nodes": 0,
+    "add_white_nodes": 0,
+    "hide_disconnected_nodes": 0,
+    "hide_node_labels": 0,
+    "block_structure_pics_in_bubbles": 0,
+    "caller_identity": "crc-polyphenol-reproducibility"
+  },
+  "retrieved_utc": "2026-11-04T19:38:34.298930+00:00",
+  "svg_sha256": "abe546297c551db67f34079c9fe30b8a68c96648e27f461e16a0e0270b2f6801",
+  "png_sha256": "b86244cc56c1e0d1de69ac9c5fce5e380d79a682d9bdba4987cd28c33aac5937"
+}

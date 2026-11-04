@@ -19,7 +19,7 @@ This repository accompanies my manuscript, *Network-based discovery of bioactive
 | Highest-ranked candidate | Kaempferol |
 | Docking records | 10 primary compounds and one supplementary structure against two receptor systems |
 
-In the notebook, I recompute expression results from the processed FPKM matrix, protein centrality from the archived network, and observed distances between disease proteins and compound targets. For enrichment plots, I use the complete original GO and KEGG result tables. The historical compound ranking uses the saved random-distribution moments. I rebuild the docking score table from the original workbook and retain the pose illustration from my submitted manuscript.
+In the notebook, I recompute expression results from the processed FPKM matrix, protein centrality from the archived network, and observed distances between disease proteins and compound targets. For enrichment plots, I use the complete original GO and KEGG result tables. The historical compound ranking uses the saved random-distribution moments. I display the original STRING PPI export and native STRING images for each compound network. For docking, I rebuild the score table from the original workbook and show the four original images from my docking presentation individually.
 
 ## Files to start with
 

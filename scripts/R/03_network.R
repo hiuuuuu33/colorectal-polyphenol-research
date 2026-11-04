@@ -1,12 +1,11 @@
-# Plot protein centrality, compound proximity, and target networks for Figures 5, 6, and 8.
+# Display native STRING networks and plot protein centrality and compound proximity for Figures 5, 6, and 8.
 
 run_network_figures <- function(project_root = ".") {
-  packages <- c("ggplot2", "ggrepel")
+  packages <- c("ggplot2")
   absent <- packages[!vapply(packages, requireNamespace, logical(1), quietly = TRUE)]
   if (length(absent)) stop("Install required R packages: ", paste(absent, collapse = ", "))
   library(ggplot2)
   root <- normalizePath(project_root, mustWork = TRUE)
-  inputs <- file.path(root, "data", "network")
   results <- file.path(root, "results", "network")
   figures <- file.path(root, "figures", "reproduced", "network")
   dir.create(figures, recursive = TRUE, showWarnings = FALSE)
@@ -22,29 +21,11 @@ run_network_figures <- function(project_root = ".") {
                     plot.title = element_text(face = "bold", size = 13)))
 
   nodes <- load_csv("ppi_centrality_recalculated.csv")
-  positions <- load_csv("ppi_layout.csv")
-  nodes <- merge(nodes, positions, by = "name", sort = FALSE)
-  edges <- read.delim(file.path(inputs, "string_interactions_short.tsv"),
-                      check.names = FALSE)
-  a <- match(edges[[1]], nodes$name)
-  b <- match(edges[[2]], nodes$name)
-  segments <- data.frame(x = nodes$x[a], y = nodes$y[a],
-                         xend = nodes$x[b], yend = nodes$y[b])
-  network <- ggplot() +
-    geom_segment(data = segments, aes(x, y, xend = xend, yend = yend),
-                 color = "#AAB4B8", linewidth = 0.5, alpha = 0.7) +
-    geom_point(data = nodes, aes(x, y, size = degree, fill = degree),
-               shape = 21, color = "white", stroke = 0.6) +
-    ggrepel::geom_text_repel(data = nodes, aes(x, y, label = name),
-                             seed = 2026, size = 3.3, max.overlaps = Inf,
-                             min.segment.length = 0, box.padding = 0.3) +
-    scale_fill_gradient(low = "#AFD5D0", high = "#157D80") +
-    scale_size_continuous(range = c(3, 9), guide = "none") +
-    scale_x_continuous(expand = expansion(mult = 0.15)) +
-    labs(title = "Progression-associated protein network", size = "Degree", fill = "Degree") +
-    coord_cartesian(clip = "off") + theme_void(base_size = 11) +
-    theme(plot.title = element_text(face = "bold", size = 13), plot.margin = margin(18, 24, 18, 24))
-  save_figure(network, "figure_05A_ppi_network", 11, 6.8)
+  python <- Sys.getenv("PYTHON", unset = Sys.which("python3"))
+  if (!nzchar(python)) stop("Python 3 is required; set PYTHON to its executable.")
+  native_log <- system2(python, c(file.path(root, "scripts", "build_string_visuals.py"), "--offline"),
+                         stdout = TRUE, stderr = TRUE)
+  if (!is.null(attr(native_log, "status"))) stop(paste(native_log, collapse = "\n"))
 
   top <- nodes[order(-nodes$degree, -nodes$betweenness, nodes$name), ][1:10, ]
   metrics <- rbind(data.frame(name = top$name, metric = "Degree", value = top$degree),
@@ -84,47 +65,6 @@ run_network_figures <- function(project_root = ".") {
     theme(panel.grid.major.y = element_blank())
   save_figure(lollipop, "figure_06B_top10_candidates", 11, 6.5)
 
-  string_layout <- file.path(results, "compound_string_layouts.csv")
-  string_summary <- file.path(results, "compound_string_summary.csv")
-  if (file.exists(string_layout) && file.exists(string_summary)) {
-    layouts <- read.csv(string_layout, stringsAsFactors = FALSE)
-    compound_info <- read.csv(string_summary, stringsAsFactors = FALSE)
-    compound_edges <- list()
-    for (i in seq_len(nrow(compound_info))) {
-      item <- compound_info[i, ]
-      dat <- read.delim(file.path(root, item$edges_file), check.names = FALSE)
-      pos <- layouts[layouts$chemical == item$chemical, ]
-      dat <- dat[dat$stringId_A %in% pos$string_id & dat$stringId_B %in% pos$string_id, ]
-      if (nrow(dat)) {
-        ai <- match(dat$stringId_A, pos$string_id)
-        bi <- match(dat$stringId_B, pos$string_id)
-        compound_edges[[i]] <- data.frame(chemical = item$chemical,
-                                          x = pos$x[ai], y = pos$y[ai],
-                                          xend = pos$x[bi], yend = pos$y[bi])
-      }
-    }
-    segment_data <- do.call(rbind, compound_edges)
-    labels <- setNames(paste0(LETTERS[seq_len(nrow(compound_info))], ". ",
-                              compound_info$display_name), compound_info$chemical)
-    layouts$chemical <- factor(layouts$chemical, levels = compound_info$chemical)
-    segment_data$chemical <- factor(segment_data$chemical, levels = compound_info$chemical)
-    compound_plot <- ggplot() +
-      geom_segment(data = segment_data, aes(x, y, xend = xend, yend = yend),
-                   color = "#BAC5C8", linewidth = 0.22, alpha = 0.55) +
-      geom_point(data = layouts, aes(x, y, size = degree), color = "#157D80", alpha = 0.9) +
-      geom_text(data = layouts, aes(x, y, label = symbol), size = 1.7, vjust = -0.55,
-                check_overlap = TRUE) +
-      facet_wrap(~chemical, ncol = 2, labeller = labeller(chemical = labels)) +
-      scale_size_continuous(range = c(1, 3)) +
-      scale_x_continuous(expand = expansion(mult = 0.15)) +
-      scale_y_continuous(expand = expansion(mult = 0.18)) +
-      labs(title = "Recorded compound targets: STRING 12.0 functional associations") +
-      theme_void(base_size = 11) +
-      theme(legend.position = "none", strip.text = element_text(hjust = 0, face = "bold"),
-             panel.spacing = grid::unit(1.2, "lines"),
-             plot.title = element_text(size = 13, face = "bold", margin = margin(b = 15)))
-    save_figure(compound_plot, "figure_08_compound_target_networks_reconstructed", 11, 16)
-  }
   message("Network figures saved to ", figures)
   invisible(list(nodes = nodes, candidates = top10))
 }

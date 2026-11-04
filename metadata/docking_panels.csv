@@ -1,0 +1,5 @@
+file,source_pptx,slide,slide_title,ppt_media,width,height,sha256
+figures/original/docking/phloretin_6wzm_3d.png,data/docking/records/docking_results.pptx,1,CXCL8-phloretin,ppt/media/image1.png,1572,735,13c8cd42ac44c378878defebde5a4396dc03fdbe9d069525f48e7710fd1670d1
+figures/original/docking/phloretin_6wzm_interactions.png,data/docking/records/docking_results.pptx,1,CXCL8-phloretin,ppt/media/image2.png,1571,1585,2085ca9b77f87cb5c29ac44a4b60464c9302af7024b4d6556c58d8df25d03fef
+figures/original/docking/kaempferol_1ht0_3d.png,data/docking/records/docking_results.pptx,2,ADH1C-kaempferol,ppt/media/image3.png,1489,849,bbdaf4e3137ad401c94973a19c0ada85962767dd743fe8e9b492c791fd886fc5
+figures/original/docking/kaempferol_1ht0_interactions.png,data/docking/records/docking_results.pptx,2,ADH1C-kaempferol,ppt/media/image4.png,1515,1589,2282c7110a3955c6165c965a785b542cb491587714ebfa50e4404678ac3b1784
