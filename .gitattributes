@@ -1,0 +1,20 @@
+*.R text eol=lf
+*.Rmd text eol=lf
+*.py text eol=lf
+*.csv text eol=lf
+*.tsv text eol=lf
+*.md text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.png binary
+*.pdf binary
+*.Rdata binary
+*.rds binary
+
+# Preserve the exact bytes of archived research inputs and submitted materials.
+archive/** -text
+data/** -text
+upstream/** -text
+manuscript/** -text
+figures/original/** -text
+figures/submitted/** -text

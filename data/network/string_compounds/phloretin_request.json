@@ -1,0 +1,17 @@
+{
+  "chemical": "phloretin",
+  "api_base": "https://version-12-0.string-db.org/api/tsv",
+  "string_version": "12.0",
+  "retrieved_utc": "2026-11-04T16:00:12.756725+00:00",
+  "species": 9606,
+  "network_type": "functional",
+  "required_score": 400,
+  "add_nodes": 0,
+  "singleton_rule": "Keep single query node without added neighbors",
+  "query_symbols": [
+    "ESR1",
+    "SLC2A1"
+  ],
+  "mapping_sha256": "4f681cc4c36d8a2198811ea92407193ad935bae980c7b1234bb86669ce611ab7",
+  "edges_sha256": "2fb9258ffb5366ccd6f3ae0b47b73f4ae313462aa4e09683d7a0ca819a7c4838"
+}

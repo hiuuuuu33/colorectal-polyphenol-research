@@ -1,0 +1,29 @@
+{
+  "source_proximity_records": 66,
+  "unique_pubchem_identities": 65,
+  "threshold_hit_records": 12,
+  "threshold_hit_unique_identities": 11,
+  "interactome_lcc_nodes": 17651,
+  "interactome_lcc_edges": 351393,
+  "interactome_self_loops": 5069,
+  "input_disease_genes": 28,
+  "mapped_disease_genes": 24,
+  "ppi_nodes": 29,
+  "ppi_edges": 61,
+  "ppi_component_sizes": [
+    24,
+    2,
+    1,
+    1,
+    1
+  ],
+  "max_closest_absolute_error": 2.220446049250313e-16,
+  "max_shortest_absolute_error": 4.440892098500626e-16,
+  "max_z_closest_error_from_saved_moments": 2.6645352591003757e-15,
+  "ppi_centrality_matches_original_cytoscape": true,
+  "historical_z_scores": "Loaded from saved results; null vectors not present in source archive",
+  "python": "3.12.14",
+  "networkx": "3.7",
+  "numpy": "2.3.5",
+  "pandas": "2.2.3"
+}

@@ -1,0 +1,333 @@
+---
+title: "Colorectal adenoma-carcinoma progression"
+subtitle: "Transcriptomics, polyphenol prioritization, and structural assessment"
+author: "Hiu Mai"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+    number_sections: true
+    code_folding: hide
+    self_contained: true
+    mathjax: null
+    theme: flatly
+    highlight: textmate
+    css: report.css
+    df_print: default
+---
+
+```{r setup, include=FALSE}
+root <- Sys.getenv("RESEARCH_REPO_ROOT", unset = getwd())
+knitr::opts_knit$set(root.dir = root)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE,
+                      fig.align = "center", out.width = "100%", cache = FALSE)
+set.seed(20261104)
+read_result <- function(path) read.csv(file.path(root, path), check.names = FALSE)
+show_figure <- function(path) knitr::include_graphics(file.path(root, path), rel_path = FALSE)
+source_listing <- function(path) {
+  code <- htmltools::htmlEscape(paste(readLines(file.path(root, path), warn = FALSE), collapse = "\n"))
+  cat('<details><summary>Source: ', path, '</summary><pre><code>', code, '</code></pre></details>\n', sep = '')
+}
+show_submitted <- function(number) {
+  p <- file.path(root, "figures", "submitted", sprintf("figure_%02d.png", number))
+  if (!file.exists(p)) stop("Missing submitted figure: ", p)
+  uri <- knitr::image_uri(p)
+  cat('<details><summary>View Figure ', number,
+      ' from the submitted manuscript</summary><img alt="Submitted figure ', number,
+      '" src="', uri, '" style="width:100%;height:auto"></details>\n', sep = '')
+}
+python <- Sys.getenv("PYTHON", unset = Sys.which("python3"))
+if (!nzchar(python)) stop("Python 3 is required; set the PYTHON environment variable.")
+```
+
+# Research Question
+
+Which expression changes emerge during colorectal adenoma formation and persist into carcinoma, and which polyphenols have protein targets close to those changes in the human interactome?
+
+This study connects three stages of analysis: transcriptomic comparison of normal tissue, adenoma and early colorectal cancer; a progression-associated protein network; and prioritization of polyphenols for structural follow-up. The expression data come from [GSE228012](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228012). The network approach builds on [do Valle et al. (2021)](https://doi.org/10.1038/s43016-021-00243-7).
+
+This executable companion was assembled from the author's archived research files for the final manuscript. It follows the analysis in execution order, retains the original scripts and outputs, and records the software and checks used during reconstruction. Repository preparation and new reproduction scripts were developed with Codex assistance; the original manuscript and historical research files are preserved separately.
+
+The [final manuscript](https://github.com/hiuuuuu33/colorectal-polyphenol-research/blob/main/manuscript/submitted-manuscript.pdf) and [research repository](https://github.com/hiuuuuu33/colorectal-polyphenol-research) accompany this report.
+
+# Data and Workflow
+
+The expression matrix contains 33 tissue samples: 11 adenomas from one group of individuals, and paired stage-I colorectal cancer and adjacent normal tissue from another 11 patients. The submitted analysis uses a three-group limma model on log2(FPKM + 1).
+
+| Step | Input | Computation | Output |
+|:--|:--|:--|:--|
+| 1. Expression analysis | Processed FPKM matrix | Gene-symbol deduplication, expression filtering, limma, PCA | Three contrasts; Figure 1 |
+| 2. Progression-associated genes | Sequential contrasts | Intersect concordant up/up and down/down genes | 29-gene set; Figure 2 |
+| 3. Functional enrichment | Frozen original GO/KEGG result tables | Significance filtering and figure regeneration | Figures 3-4 and enrichment tables |
+| 4. Protein and compound networks | STRING edges, interactome, compound-target tables | Centrality, shortest paths, identity curation | Figures 5-6, target lists |
+| 5. Chemical and target context | PubChem identities, frozen STRING responses | Depiction assembly and target network plots | Figures 7-8 companions |
+| 6. Structural assessment | Archived workbook, PDB structures and grid parameters | Score-table reconstruction and plotting | Table 5; archived Figure 9 |
+
+## Execution Record
+
+All executable steps use repository-relative paths. This render reruns the expression analyses, filters the frozen enrichment tables, recomputes network distances and centrality, and rebuilds the score summaries. Original enrichment statistics and null-distribution moments remain available as historical inputs. New STRING responses and PubChem depictions are cached for subsequent offline renders.
+
+```{r preparation}
+source("scripts/R/01_transcriptomics.R")
+source("scripts/R/02_enrichment_figures.R")
+source("scripts/R/03_network.R")
+source("scripts/R/04_docking.R")
+```
+
+# Transcriptomic Changes
+
+## Preprocessing and Differential Expression
+
+For duplicated symbols, the analysis retains the row with the greatest mean FPKM. Genes enter the model when FPKM exceeds 1 in at least 7 of the 33 samples. Differentially expressed genes satisfy Benjamini-Hochberg adjusted P < 0.05 and absolute log2 fold change > 1.
+
+```{r transcriptomics}
+transcriptomics <- run_transcriptomics(root)
+knitr::kable(transcriptomics$preprocessing, caption = "Expression preprocessing")
+knitr::kable(transcriptomics$summary, caption = "Differential expression across the three contrasts")
+```
+
+The largest set of differences appears in the direct cancer-versus-normal comparison. The two sequential comparisons identify the changes used to define the progression-associated gene set.
+
+```{r figure1, echo=FALSE, fig.cap="Figure 1 companion. Recomputed PCA and volcano plots from the processed FPKM matrix. Plot layout and labeling were regenerated for this report."}
+show_figure("figures/reproduced/transcriptomics/figure_01_transcriptomic_overview.png")
+```
+
+```{r submitted1, echo=FALSE, results='asis'}
+show_submitted(1)
+```
+
+## Progression-Associated Genes
+
+The intersection of the two sequential contrasts yields `r sum(transcriptomics$progressive$direction == 'Up-Up')` up/up genes and `r sum(transcriptomics$progressive$direction == 'Down-Down')` down/down genes. MYC, CXCL8 and COL12A1 are among the up/up genes; ADH1C is among the down/down genes. The full table below preserves both contrast-specific effect sizes and adjusted P values.
+
+```{r progressive-table}
+progressive_display <- transcriptomics$progressive
+p_columns <- grep("^adjP", names(progressive_display), value = TRUE)
+progressive_display[p_columns] <- lapply(progressive_display[p_columns],
+                                        format, scientific = TRUE, digits = 3)
+knitr::kable(progressive_display, digits = 4,
+             caption = "All 29 progression-associated genes")
+```
+
+```{r figure2, echo=FALSE, fig.cap="Figure 2 companion. A: scaled expression heatmap. B: the 15 down/down genes with the greatest overall expression differences, following the archived plotting code. C: all eight up/up genes. All 21 down/down genes are retained in the heatmap and result table."}
+show_figure("figures/reproduced/transcriptomics/figure_02_progressive_genes.png")
+```
+
+```{r submitted2, echo=FALSE, results='asis'}
+show_submitted(2)
+source_listing("scripts/R/01_transcriptomics.R")
+```
+
+# Functional Interpretation
+
+## Adenoma Formation
+
+The archived enrichment results connect adenoma formation with immune recruitment and extracellular-matrix organization, together with changes in epithelial transport and metabolic functions. The code reads the complete original result tables, applies adjusted P < 0.05, and regenerates the plots. Using frozen tables preserves the annotation state of the submitted analysis.
+
+```{r enrichment}
+enrichment <- run_enrichment_figures(root)
+knitr::kable(enrichment$summary, caption = "Tested and significant terms in the original enrichment outputs")
+```
+
+```{r figure3, echo=FALSE, fig.cap="Figure 3 companion. Functional enrichment for adenoma versus normal tissue, regenerated from frozen GO and KEGG tables."}
+show_figure("figures/reproduced/transcriptomics/figure_03_enrichment_Adenoma_vs_Normal.png")
+```
+
+```{r submitted3, echo=FALSE, results='asis'}
+show_submitted(3)
+```
+
+## Adenoma-to-Carcinoma Transition
+
+The carcinoma-versus-adenoma results emphasize extracellular-matrix and collagen-related processes. These outputs provide the functional context for the progression-associated protein network.
+
+```{r figure4, echo=FALSE, fig.cap="Figure 4 companion. Functional enrichment for carcinoma versus adenoma, regenerated from the original exported result tables."}
+show_figure("figures/reproduced/transcriptomics/figure_04_enrichment_CRC_vs_Adenoma.png")
+```
+
+```{r submitted4, echo=FALSE, results='asis'}
+show_submitted(4)
+source_listing("scripts/R/02_enrichment_figures.R")
+```
+
+# Protein Networks and Polyphenol Prioritization
+
+## Progression-Associated Protein Network
+
+The archived STRING graph contains 29 nodes and 61 edges at the submitted confidence cutoff of 0.150. Centrality calculations reproduce the positions of MYC and CXCL8 as the two highest-degree proteins. Closeness and betweenness use connected-component conventions recorded in the network source documentation.
+
+```{r network-analysis}
+network_log <- system2(python, c("scripts/python/network_analysis.py", "--mode", "validate"),
+                        stdout = TRUE, stderr = TRUE)
+if (!is.null(attr(network_log, "status"))) stop(paste(network_log, collapse = "\n"))
+compound_network_log <- system2(python, c("scripts/python/fetch_string_compounds.py", "--offline"),
+                               stdout = TRUE, stderr = TRUE)
+if (!is.null(attr(compound_network_log, "status"))) stop(paste(compound_network_log, collapse = "\n"))
+network <- run_network_figures(root)
+centrality <- read_result("results/network/ppi_centrality_recalculated.csv")
+knitr::kable(head(centrality, 10), digits = 4,
+             caption = "Recomputed centrality of progression-associated proteins")
+```
+
+```{r figure5a, echo=FALSE, fig.cap="Figure 5A companion. Network layout regenerated from the archived STRING edges."}
+show_figure("figures/reproduced/network/figure_05A_ppi_network.png")
+```
+
+```{r figure5b, echo=FALSE, fig.cap="Figure 5B companion. Recomputed degree, betweenness and closeness."}
+show_figure("figures/reproduced/network/figure_05B_ppi_centrality.png")
+```
+
+```{r submitted5, echo=FALSE, results='asis'}
+show_submitted(5)
+```
+
+## Network Proximity
+
+For each compound target, the analysis calculates its shortest distance to the nearest mapped disease protein, then averages those distances. The archived output contains 66 name entries representing 65 PubChem identities. Applying the original Z < -1.96 screen yields 11 unique candidate identities. The ten highest-ranked identities are shown below, matching the compound selection in the final manuscript.
+
+The executable reconstruction uses the archived disease-mapping file, which contains 24 mapped disease nodes, to reproduce the saved proximity output. The original expression analysis retains all 29 progression-associated genes. The mapping files and historical randomization moments are preserved alongside the results so that the reported ranking can be traced to its exact inputs.
+
+```{r candidates}
+candidates <- read_result("results/network/top10_candidates.csv")
+candidates$display_name <- gsub("naphtoquinone", "naphthoquinone", candidates$display_name)
+knitr::kable(candidates[, c("rank", "display_name", "pubchem_cid", "n_mapped_chemical", "closest", "z_closest")],
+             digits = 4, caption = "Ten prioritized compound identities")
+```
+
+```{r figure6a, echo=FALSE, fig.cap="Figure 6A companion. Saved closest-distance Z scores across 66 compound entries."}
+show_figure("figures/reproduced/network/figure_06A_proximity_distribution.png")
+```
+
+```{r figure6b, echo=FALSE, fig.cap="Figure 6B companion. Top-ten ranking after identity curation. Point size indicates the number of mapped targets."}
+show_figure("figures/reproduced/network/figure_06B_top10_candidates.png")
+```
+
+```{r submitted6, echo=FALSE, results='asis'}
+show_submitted(6)
+```
+
+Observed distances are recomputed from the interactome, and archived random-distribution means and standard deviations determine the historical Z scores. A separate seeded randomization command is supplied for new runs; new null vectors and run metadata are written to a separate output directory.
+
+```bash
+python3 scripts/python/network_analysis.py --mode randomize --n-random 1000
+```
+
+```{r network-source, echo=FALSE, results='asis'}
+source_listing("scripts/python/network_analysis.py")
+source_listing("scripts/R/03_network.R")
+```
+
+# Chemical Identity and Target Context
+
+## Chemical Structures
+
+PubChem identifiers connect the ranked compounds to their two-dimensional structures. Cached depictions allow the structure panel to be rebuilt offline. The submitted structure panel remains available below for comparison.
+
+```{r chemistry}
+chemistry_log <- system2(python, "scripts/build_chemical_structures.py", stdout = TRUE, stderr = TRUE)
+if (!is.null(attr(chemistry_log, "status"))) stop(paste(chemistry_log, collapse = "\n"))
+```
+
+```{r figure7, echo=FALSE, fig.cap="Figure 7 companion. Two-dimensional depictions retrieved from PubChem by the identifiers used in the curated top ten."}
+show_figure("figures/reproduced/chemistry/figure_07_compound_structures.png")
+```
+
+```{r submitted7, echo=FALSE, results='asis'}
+show_submitted(7)
+source_listing("scripts/build_chemical_structures.py")
+```
+
+## Compound-Associated Target Networks
+
+The final manuscript visualizes functional associations among each compound's recorded targets using human STRING v12.0 at a combined score cutoff of 0.400. The companion below is reconstructed from responses retrieved during repository preparation, with all returned mappings and edges frozen in the repository. It preserves the source target sets and the submitted query parameters; network layout is regenerated.
+
+```{r figure8-summary}
+compound_network_file <- "results/network/compound_string_summary.csv"
+compound_networks <- read_result(compound_network_file)
+knitr::kable(compound_networks[, c("rank", "display_name", "recorded_targets", "string_mapped_nodes", "edges_score_ge_0_4")],
+             col.names = c("Rank", "Compound", "Recorded targets", "Mapped nodes", "Edges (score >= 0.4)"),
+             caption = "Cached STRING target-network reconstruction")
+```
+
+```{r figure8, echo=FALSE, fig.cap="Figure 8 companion. Reconstructed compound-associated target networks using cached STRING v12.0 responses."}
+figure8 <- "figures/reproduced/network/figure_08_compound_target_networks_reconstructed.png"
+show_figure(figure8)
+```
+
+```{r submitted8, echo=FALSE, results='asis'}
+show_submitted(8)
+```
+
+# Structural Assessment
+
+## Docking Scores
+
+The source workbook records ten primary compound structures and one supplementary punicalagin structure against two receptor systems: ADH1C (PDB 1HT0) and the CXCL8-Fab assembly (PDB 6WZM). The code reconstructs Table 5 and the comparison plot directly from that workbook.
+
+```{r docking}
+docking <- run_docking(root)
+knitr::kable(docking$scores[, c("compound", "pubchem_cid", "record_type", "ADH1C_1HT0", "CXCL8_Fab_6WZM")],
+             col.names = c("Compound", "PubChem CID", "Record type", "ADH1C (1HT0)", "CXCL8-Fab (6WZM)"),
+             digits = 1, caption = "Reconstructed manuscript Table 5. Archived best-mode Vina scores in kcal/mol.")
+```
+
+```{r docking-score-figure, echo=FALSE, fig.cap="Docking-score companion. Archived best-mode scores reconstructed from the source workbook."}
+show_figure("figures/reproduced/docking/docking_score_summary.png")
+```
+
+## Representative Poses
+
+Figure 9 preserves the final manuscript's visualization of phloretin in the 6WZM receptor system and kaempferol in 1HT0. The archive contains original crystallographic PDB files, grid coordinates, the score workbook and the historical visualizations. A new docking calculation requires the prepared receptor and ligand PDBQT files and the original output poses; those files were not present in the supplied archive. The current executable workflow rebuilds score analyses and retains the submitted pose illustration.
+
+```{r submitted9, echo=FALSE, fig.cap="Submitted Figure 9. Historical docking-pose visualization, preserved from the final PDF."}
+show_figure("figures/submitted/figure_09.png")
+```
+
+```{r grid-table}
+knitr::kable(docking$grids, caption = "Archived docking search-space parameters")
+```
+
+```{r docking-source, echo=FALSE, results='asis'}
+source_listing("scripts/R/04_docking.R")
+```
+
+# Verification and Provenance
+
+## Reproduction Checks
+
+```{r checks}
+knitr::kable(read_result("results/transcriptomics/verification.csv"),
+             caption = "Recomputed expression results versus historical exports")
+knitr::kable(read_result("results/enrichment/verification.csv"),
+             caption = "Frozen enrichment results: tested and significant term counts")
+network_checks <- jsonlite::fromJSON(file.path(root, "results/network/validation_summary.json"))
+network_checks <- network_checks[vapply(network_checks, function(x) length(x) == 1, logical(1))]
+knitr::kable(data.frame(check = names(network_checks), value = vapply(network_checks, as.character, character(1))),
+             caption = "Network reconstruction checks")
+```
+
+## Files and Original Work
+
+The repository preserves the final manuscript, its nine embedded figures, the processed expression matrix, archived result tables and R workspaces, original R scripts and figure sources, compound-target data, interactome data, and docking records. A file manifest provides SHA-256 checksums. Earlier drafts, reference-article PDFs, duplicate ZIP archives, unrelated personal documents and operating-system files remain in the author's original folder.
+
+The original polyphenol-network implementation is credited to [Italo do Valle and collaborators](https://github.com/italodovalle/polyphenols), with its MIT license preserved in `upstream/polyphenols/`. The original study design, computational work and mentor contributions are described in the submitted manuscript. Newly prepared reproduction wrappers and this report are identified in the repository provenance record.
+
+## Remaining Inputs
+
+| Component | Available and executable | Additional historical input |
+|:--|:--|:--|
+| Differential expression and progression genes | Recomputed from processed FPKM; numerical agreement checked | Raw sequencing is obtained separately from the source accession |
+| GO/KEGG figures | Regenerated from complete original exported result tables | Original annotation state is retained as tables |
+| Network distances and centrality | Recomputed from archived graph and target sets | Historical full null vectors are absent; fresh seeded randomization is available |
+| Chemical structures and compound networks | Rebuilt from cached source responses | Retrieval metadata records the reconstruction date |
+| Docking scores | Rebuilt from the original workbook | Prepared PDBQT inputs and output pose coordinates are needed for a new docking run |
+
+## Software Environment
+
+```{r session}
+sessionInfo()
+```

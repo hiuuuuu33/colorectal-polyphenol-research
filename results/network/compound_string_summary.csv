@@ -1,0 +1,11 @@
+rank,chemical,display_name,recorded_targets,string_mapped_nodes,edges_score_ge_0_4,mapping_file,edges_file
+1,kaempferol,kaempferol,40,38,161,data/network/string_compounds/kaempferol_mapping.tsv,data/network/string_compounds/kaempferol_edges.tsv
+2,4-methylcatechol,4-methylcatechol,2,2,0,data/network/string_compounds/4methylcatechol_mapping.tsv,data/network/string_compounds/4methylcatechol_edges.tsv
+3,quercetin,quercetin,222,215,1560,data/network/string_compounds/quercetin_mapping.tsv,data/network/string_compounds/quercetin_edges.tsv
+4,punicalagin,punicalagin,1,1,0,data/network/string_compounds/punicalagin_mapping.tsv,data/network/string_compounds/punicalagin_edges.tsv
+5,umbelliferone,umbelliferone,3,3,1,data/network/string_compounds/umbelliferone_mapping.tsv,data/network/string_compounds/umbelliferone_edges.tsv
+6,esculetin,esculetin,1,1,0,data/network/string_compounds/esculetin_mapping.tsv,data/network/string_compounds/esculetin_edges.tsv
+7,"2,3-dihydroxybenzoic acid","2,3-dihydroxybenzoic acid",1,1,0,data/network/string_compounds/23dihydroxybenzoicacid_mapping.tsv,data/network/string_compounds/23dihydroxybenzoicacid_edges.tsv
+8,resveratrol,trans-resveratrol,64,61,232,data/network/string_compounds/resveratrol_mapping.tsv,data/network/string_compounds/resveratrol_edges.tsv
+9,"1,4-naphtoquinone","1,4-naphthoquinone",4,4,1,data/network/string_compounds/14naphtoquinone_mapping.tsv,data/network/string_compounds/14naphtoquinone_edges.tsv
+10,phloretin,phloretin,2,2,1,data/network/string_compounds/phloretin_mapping.tsv,data/network/string_compounds/phloretin_edges.tsv

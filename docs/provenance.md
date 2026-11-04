@@ -1,0 +1,38 @@
+# Data, Code and Reconstruction Provenance
+
+## Source Preservation
+
+All material was copied into a separate repository. The original research directory was read without moving, renaming, replacing or deleting its files. A complete private source inventory and a before/after checksum comparison are retained outside this repository. The public file manifests use repository-relative paths.
+
+The final manuscript is preserved byte for byte. `metadata/submitted_manuscript.json` records its SHA-256 digest; `metadata/submitted_figures.csv` records the embedded figures extracted from it. `metadata/original_archive_manifest.csv` connects preserved historical scripts, tables, workspaces and figure sources to their original relative paths.
+
+## Original Research Files
+
+- Original R scripts are in `archive/original-r/`, including historical variants.
+- Original exported tables are in `archive/original-tables/`; some belong to earlier analysis versions. They remain labeled as archived exports.
+- Original R workspaces are in `archive/r-snapshots/`.
+- Original generated images and editable figure sources are in `figures/original/`.
+- Original molecular-docking records are in `data/docking/`.
+- Original polyphenol code and license are retained in `upstream/`.
+
+The current workflow reads explicitly selected files from `data/`. In particular, the final network analysis uses `polyphenols-master/out/merged_zscore_proximity.csv`, containing 66 entries. The earlier 42-entry export is retained as a historical table in the archive and is outside the executable analysis.
+
+## New Reproduction Work
+
+The modules under `scripts/R/01_*` to `04_*`, the Python network reconstruction, the chemical depiction assembly, the R Markdown report and repository documentation were assembled in November 2026 with Codex assistance. Their purpose is to make the supplied research executable and traceable. The analysis record is a retrospective reconstruction of the archived workflow. File modification timestamps have not been converted into a claimed day-by-day research diary.
+
+1. Expression analysis starts from the processed FPKM matrix and reproduces the historical unblocked limma model. All three differential-expression exports and the 29-gene identities are checked numerically.
+2. Functional-enrichment figures use 15 complete frozen result tables. This preserves their historical annotation state; the default render filters and plots those results.
+3. Protein centrality and observed proximity distances are recomputed from the supplied graphs and mappings. The historical mapping contains 24 disease nodes; the expression-derived set contains 29 genes. Historical null-distribution moments are retained with the source output. A separate fresh-randomization mode saves newly generated null vectors and metadata.
+4. Chemical depictions are fetched by PubChem CID once and then cached. Compound target networks are reconstructed from the original source targets using STRING 12.0, human taxonomy 9606 and combined score 0.400; responses and request parameters are frozen for offline rendering.
+5. Docking score analyses read the original workbook. Source PDB structures, grids and images are retained. Prepared receptor/ligand PDBQT and output pose coordinates were absent from the supplied archive; repeating the docking search requires those additional inputs.
+
+The final PDF is the source of the submission's wording. This repository documents the input files that reproduce the archived outputs without modifying the submitted manuscript.
+
+## Excluded Material
+
+Downloaded full-text reference articles are cited by their source URLs rather than republished here. Duplicate ZIP archives, unrelated personal documents, Office lock files, operating-system metadata and intermediate manuscript drafts remain in the original folder. Connectivity-map example datasets unused by the colorectal workflow remain with the original upstream download.
+
+## Remaining Inputs
+
+The complete historical randomization vectors and prepared docking input/output coordinates were absent from the supplied source directory. Newly generated null vectors are saved independently from the historical ranking. Frozen enrichment results preserve the available record of the original annotation calculations.

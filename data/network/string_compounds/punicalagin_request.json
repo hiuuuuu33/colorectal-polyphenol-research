@@ -1,0 +1,16 @@
+{
+  "chemical": "punicalagin",
+  "api_base": "https://version-12-0.string-db.org/api/tsv",
+  "string_version": "12.0",
+  "retrieved_utc": "2026-11-04T15:59:50.479653+00:00",
+  "species": 9606,
+  "network_type": "functional",
+  "required_score": 400,
+  "add_nodes": 0,
+  "singleton_rule": "Keep single query node without added neighbors",
+  "query_symbols": [
+    "BACE1"
+  ],
+  "mapping_sha256": "270945bbad5e24c371bcfcd13f0fb43fe740ee561a16f6ddf537685b8b67b860",
+  "edges_sha256": "d8352d581a581cfe0b3b66566f2632d032b7c2b8d4ec4c279337bddd4e413ffc"
+}

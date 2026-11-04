@@ -1,0 +1,2 @@
+"category","subcategory","ID","Description","GeneRatio","BgRatio","RichFactor","FoldEnrichment","zScore","pvalue","p.adjust","qvalue","geneID","Count"
+"Metabolism","Xenobiotics biodegradation and metabolism","hsa00982","Drug metabolism - cytochrome P450","5/72","73/9410",0.0684931506849315,8.95167427701674,5.98862860171377,0.000228509840604033,0.0383896532214775,0.0360805011480051,"54575/130/2330/218/126",5

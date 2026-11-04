@@ -1,0 +1,4 @@
+queryItem	queryIndex	stringId	ncbiTaxonId	taxonName	preferredName	annotation
+CA12	0	9606.ENSP00000178638	9606	Homo sapiens	CA12	Carbonic anhydrase 12; Reversible hydration of carbon dioxide. Belongs to the alpha-carbonic anhydrase family.
+CA9	1	9606.ENSP00000367608	9606	Homo sapiens	CA9	Carbonic anhydrase 9; Reversible hydration of carbon dioxide. Participates in pH regulation. May be involved in the control of cell proliferation and transformation. Appears to be a novel specific biomarker for a cervical neoplasia.
+OXSM	2	9606.ENSP00000280701	9606	Homo sapiens	OXSM	3-oxoacyl-[acyl-carrier-protein] synthase, mitochondrial; May play a role in the biosynthesis of lipoic acid as well as longer chain fatty acids required for optimal mitochondrial function. Belongs to the thiolase-like superfamily. Beta-ketoacyl-ACP synthases family.

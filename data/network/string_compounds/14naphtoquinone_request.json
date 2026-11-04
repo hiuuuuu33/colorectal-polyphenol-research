@@ -1,0 +1,19 @@
+{
+  "chemical": "1,4-naphtoquinone",
+  "api_base": "https://version-12-0.string-db.org/api/tsv",
+  "string_version": "12.0",
+  "retrieved_utc": "2026-11-04T16:00:08.174178+00:00",
+  "species": 9606,
+  "network_type": "functional",
+  "required_score": 400,
+  "add_nodes": 0,
+  "singleton_rule": "Keep single query node without added neighbors",
+  "query_symbols": [
+    "CDC25B",
+    "IDO1",
+    "MAOA",
+    "MAP2K1"
+  ],
+  "mapping_sha256": "8f5af96d8eb64232282abe689d829f0a7d2a7e764cd5761ead3f70e8c3fcf327",
+  "edges_sha256": "606ecf89685840ccdaf8b4a2d579f8b826efc48648cfd15f891cdfc86ecf073c"
+}

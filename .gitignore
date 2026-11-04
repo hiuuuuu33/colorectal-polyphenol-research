@@ -1,0 +1,17 @@
+.DS_Store
+.Rhistory
+.RData
+.Rproj.user/
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+*.log
+report/.knit.md
+report/*_cache/
+report/*_files/
+renv/library/
+renv/staging/
+results/network/full_randomization/
+*.zip

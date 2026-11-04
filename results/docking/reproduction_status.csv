@@ -1,0 +1,6 @@
+"item","available_inputs","reproduction"
+"Table 5 scores","Original XLSX workbook","Regenerated from workbook"
+"Grid parameters","Original parameter TXT files","Parsed into a machine-readable table"
+"Submitted Figure 9","Final submitted PDF","Preserved as a submitted figure"
+"Vina search","Raw PDB structures and grid files","Requires prepared PDBQT inputs"
+"Pose interaction diagrams","Submitted PDF and archived visualization exports","Requires final pose coordinates and visualization settings"

@@ -1,0 +1,16 @@
+"check","passed","expected_tested","expected_significant"
+"Adenoma_vs_Normal__GO_BP",TRUE,4540,239
+"Adenoma_vs_Normal__GO_CC",TRUE,381,21
+"Adenoma_vs_Normal__GO_MF",TRUE,766,68
+"Adenoma_vs_Normal__KEGG_up",TRUE,211,10
+"Adenoma_vs_Normal__KEGG_down",TRUE,283,7
+"CRC_vs_Adenoma__GO_BP",TRUE,3394,93
+"CRC_vs_Adenoma__GO_CC",TRUE,322,19
+"CRC_vs_Adenoma__GO_MF",TRUE,563,13
+"CRC_vs_Adenoma__KEGG_up",TRUE,180,14
+"CRC_vs_Adenoma__KEGG_down",TRUE,168,1
+"CRC_vs_Normal__GO_BP",TRUE,5630,711
+"CRC_vs_Normal__GO_CC",TRUE,604,76
+"CRC_vs_Normal__GO_MF",TRUE,1050,69
+"CRC_vs_Normal__KEGG_up",TRUE,290,19
+"CRC_vs_Normal__KEGG_down",TRUE,305,29

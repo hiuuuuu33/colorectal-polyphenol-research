@@ -1,0 +1,5 @@
+"check","passed","max_absolute_error"
+"Adenoma_vs_Normal_saved_DEG_table",TRUE,5.32907051820075e-15
+"CRC_vs_Adenoma_saved_DEG_table",TRUE,4.88498130835069e-15
+"CRC_vs_Normal_saved_DEG_table",TRUE,5.32907051820075e-15
+"29_progressive_gene_identities",TRUE,0

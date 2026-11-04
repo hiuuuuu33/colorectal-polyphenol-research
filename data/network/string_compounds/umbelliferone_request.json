@@ -1,0 +1,18 @@
+{
+  "chemical": "umbelliferone",
+  "api_base": "https://version-12-0.string-db.org/api/tsv",
+  "string_version": "12.0",
+  "retrieved_utc": "2026-11-04T15:59:54.919843+00:00",
+  "species": 9606,
+  "network_type": "functional",
+  "required_score": 400,
+  "add_nodes": 0,
+  "singleton_rule": "Keep single query node without added neighbors",
+  "query_symbols": [
+    "CA12",
+    "CA9",
+    "OXSM"
+  ],
+  "mapping_sha256": "9abd78ccd8da6b8f451117b8d652dc202fdaba8c094d858af919895246071672",
+  "edges_sha256": "46aefda4afd0be323166a24630df9c50470365319221df67f58cd68e8d4ae538"
+}

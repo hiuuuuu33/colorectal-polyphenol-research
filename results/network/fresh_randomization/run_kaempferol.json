@@ -1,0 +1,11 @@
+{
+  "seed": 452456,
+  "n_random": 20,
+  "python": "3.12.14",
+  "networkx": "3.7",
+  "numpy": "2.3.5",
+  "disease_nodes": 24,
+  "self_loops_retained": true,
+  "sampling": "Upstream degree-bin sampling with sorted inputs; separate same-seed streams",
+  "relation_to_historical_scores": "New run; historical node ordering and null vectors unavailable"
+}

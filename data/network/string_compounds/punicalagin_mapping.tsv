@@ -1,0 +1,2 @@
+queryItem	queryIndex	stringId	ncbiTaxonId	taxonName	preferredName	annotation
+BACE1	0	9606.ENSP00000318585	9606	Homo sapiens	BACE1	Beta-secretase 1; Responsible for the proteolytic processing of the amyloid precursor protein (APP). Cleaves at the N-terminus of the A-beta peptide sequence, between residues 671 and 672 of APP, leads to the generation and extracellular release of beta-cleaved soluble APP, and a corresponding cell-associated C-terminal fragment which is later released by gamma-secretase. Cleaves CHL1 (By similarity).

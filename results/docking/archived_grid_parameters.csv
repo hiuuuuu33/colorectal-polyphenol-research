@@ -1,0 +1,19 @@
+"receptor","parameter","value"
+"ADH1C / 1HT0","center_x",20.446
+"ADH1C / 1HT0","center_y",-4.7
+"ADH1C / 1HT0","center_z",4.799
+"ADH1C / 1HT0","size_x",27.58
+"ADH1C / 1HT0","size_y",27.58
+"ADH1C / 1HT0","size_z",27.58
+"ADH1C / 1HT0","exhaustiveness",8
+"ADH1C / 1HT0","num_modes",9
+"ADH1C / 1HT0","energy_range",3
+"CXCL8-Fab assembly / 6WZM","center_x",23.673
+"CXCL8-Fab assembly / 6WZM","center_y",-1.174
+"CXCL8-Fab assembly / 6WZM","center_z",32.063
+"CXCL8-Fab assembly / 6WZM","size_x",14.306
+"CXCL8-Fab assembly / 6WZM","size_y",14.306
+"CXCL8-Fab assembly / 6WZM","size_z",14.306
+"CXCL8-Fab assembly / 6WZM","exhaustiveness",8
+"CXCL8-Fab assembly / 6WZM","num_modes",9
+"CXCL8-Fab assembly / 6WZM","energy_range",3

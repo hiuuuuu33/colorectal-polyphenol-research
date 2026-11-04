@@ -1,0 +1,16 @@
+{
+  "chemical": "2,3-dihydroxybenzoic acid",
+  "api_base": "https://version-12-0.string-db.org/api/tsv",
+  "string_version": "12.0",
+  "retrieved_utc": "2026-11-04T15:59:58.855644+00:00",
+  "species": 9606,
+  "network_type": "functional",
+  "required_score": 400,
+  "add_nodes": 0,
+  "singleton_rule": "Keep single query node without added neighbors",
+  "query_symbols": [
+    "LCN2"
+  ],
+  "mapping_sha256": "36e86db501d9f947c328ad0ea92ffea59d5807ebd67ae964e1e0e36ec2d40be6",
+  "edges_sha256": "d8352d581a581cfe0b3b66566f2632d032b7c2b8d4ec4c279337bddd4e413ffc"
+}
