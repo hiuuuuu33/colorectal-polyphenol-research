@@ -30,15 +30,17 @@ the originals remain untouched.
 | `data/docking/grids/CXCL8_6WZM.txt` | Archived 6WZM search-box parameters |
 | `data/docking/records/docking_results.xlsx` | Original score workbook, Sheet1; Sheets2-3 are empty |
 | `data/docking/records/docking_results.pptx` | Archived visualization slides |
-| `data/docking/original_visualizations/*.png` | Four archived visualization exports, retained under original filenames |
+| `data/docking/original_visualizations/*.png` | Four archived visualization exports, named by receptor, PDB identifier and view |
 | `figures/original/docking/*.png` | Four original PNG media files extracted byte for byte from the archived PPT |
 | `metadata/docking_panels.csv` | Slide and media mapping, original dimensions and SHA-256 digests for the displayed panels |
 
 The notebook displays the four full-resolution PPT images corresponding to
 submitted Figure 9. Each image retains its original pixels and white background;
 the images have not been redrawn, cropped or rescaled on disk. The separate
-exports in `data/docking/original_visualizations/` include earlier views and
-remain archived with their original names.
+exports in `data/docking/original_visualizations/` include earlier views. Their
+filenames identify the receptor, PDB entry and 3D or 2D view. The original names
+are recorded in `metadata/original_archive_manifest.csv`; all image bytes are
+preserved.
 
 [Phloretin / 6WZM: 3D image](../figures/original/docking/phloretin_6wzm_3d.png) |
 [Interaction map](../figures/original/docking/phloretin_6wzm_interactions.png)

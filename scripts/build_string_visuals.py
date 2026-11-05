@@ -107,14 +107,14 @@ def main():
     args = parser.parse_args()
     OUTPUT.mkdir(parents=True, exist_ok=True)
     SOURCES.mkdir(parents=True, exist_ok=True)
-    nodes, edges = svg_network(ROOT / "figures/original/网络/string_vector_graphic.svg")
+    nodes, edges = svg_network(ROOT / "figures/original/network/progression_ppi_string.svg")
     centrality = pd.read_csv(ROOT / "results/network/ppi_centrality_recalculated.csv")
     archived = pd.read_csv(ROOT / "data/network/string_interactions_short.tsv", sep="\t")
     archived_edges = {tuple(sorted(pair)) for pair in archived.iloc[:, :2].itertuples(index=False, name=None)}
     if nodes != set(centrality["name"]) or edges != archived_edges:
         raise ValueError("The archived STRING export differs from the analyzed PPI network")
     ppi_image = OUTPUT / "progression_ppi_string.png"
-    white_background(ROOT / "figures/original/网络/string_hires_image.png", ppi_image)
+    white_background(ROOT / "figures/original/network/progression_ppi_string_high_resolution.png", ppi_image)
     ppi_preview = notebook_preview(ppi_image)
     with Image.open(ppi_image) as image:
         image.save(OUTPUT.parent / "figure_05A_ppi_network.png")
@@ -184,7 +184,7 @@ def main():
                                        "full_resolution_rgb_preserved": True},
                 "ppi": {"image": ppi_image.relative_to(ROOT).as_posix(),
                         "notebook_image": ppi_preview,
-                        "source": "figures/original/网络/string_hires_image.png",
+                        "source": "figures/original/network/progression_ppi_string_high_resolution.png",
                         "nodes": len(nodes), "edges": len(edges),
                         "nodes_match_archive": True, "edges_match_archive": True},
                 "compounds": entries}

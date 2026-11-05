@@ -10,7 +10,7 @@
   "ppi": {
     "image": "figures/reproduced/network/string_native/progression_ppi_string.png",
     "notebook_image": "figures/reproduced/network/string_native/progression_ppi_string_preview.png",
-    "source": "figures/original/\u7f51\u7edc/string_hires_image.png",
+    "source": "figures/original/network/progression_ppi_string_high_resolution.png",
     "nodes": 29,
     "edges": 61,
     "nodes_match_archive": true,
