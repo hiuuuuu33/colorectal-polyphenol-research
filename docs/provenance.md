@@ -19,9 +19,9 @@ The current workflow reads explicitly selected files from `data/`. In particular
 
 ## New Reproduction Work
 
-The modules under `scripts/R/01_*` to `04_*`, the Python network reconstruction, the chemical depiction assembly, the Jupyter notebook, the R Markdown report and repository documentation were assembled in November 2026 with Codex assistance. Their purpose is to make the supplied research executable and traceable. The analysis record is a retrospective reconstruction of the archived workflow. File modification timestamps have not been converted into a claimed day-by-day research diary.
+The modules under `scripts/R/01_*` to `04_*`, the Python network reconstruction, the chemical depiction assembly, the Jupyter notebook and repository documentation were assembled in November 2026 with Codex assistance. Their purpose is to make the supplied research executable and traceable. The analysis record is a retrospective reconstruction of the archived workflow. File modification timestamps have not been converted into a claimed day-by-day research diary.
 
-`Analysis.ipynb` uses a native R kernel. It writes out the expression preprocessing, limma model and progression-gene intersection, followed by plotting cells and calls to the archived-result modules. Its execution counts, tables and PNG outputs come from a complete kernel execution. `scripts/render_notebook.py` reruns the cells before exporting the same inputs and outputs to `docs/index.html`. The R Markdown version remains available as `Analysis.Rmd`; its render command writes `docs/rmarkdown.html`.
+`Analysis.ipynb` uses a native R kernel. It writes out the expression preprocessing, limma model and progression-gene intersection, followed by plotting cells and calls to the archived-result modules. Its execution counts, tables and PNG outputs come from a complete kernel execution. `scripts/render_notebook.py` reruns the cells before exporting the same inputs and outputs to `docs/index.html`.
 
 1. Expression analysis starts from the processed FPKM matrix and reproduces the historical unblocked limma model. All three differential-expression exports and the 29-gene identities are checked numerically.
 2. Functional-enrichment figures use 15 complete frozen result tables. This preserves their historical annotation state; the default render filters and plots those results.

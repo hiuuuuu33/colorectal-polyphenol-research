@@ -1,8 +1,8 @@
 # Tested Environment
 
-The executable report was tested with R 4.4.3 and Python 3.12.14 on macOS arm64. Exact directly used R package versions are recorded in `r-packages.csv`; full R environment records are saved with each result module. Python versions are pinned in `requirements.txt`.
+The executable report was tested with R 4.4.3 and Python 3.12.14 on macOS arm64. Recorded R package versions are in `r-packages.csv`; full R environment records are saved with each result module. Python versions are pinned in `requirements.txt`.
 
-The Jupyter HTML export uses nbconvert and does not require Pandoc. The alternative R Markdown render requires Pandoc, which is bundled with RStudio. A separate Pandoc installation can be selected through `RSTUDIO_PANDOC`, pointing to the folder containing the `pandoc` executable. Python can be selected through `PYTHON`.
+The Jupyter HTML export uses nbconvert. Python can be selected through `PYTHON`.
 
 The default build runs exclusively on included input files and cached source responses. Package installation is a separate step that requires internet access. Figures 1-6 and the archived docking-score summary do not require any remote database queries. The full 1,000-iteration network randomization is an optional new computation and takes longer than the default historical reconstruction.
 
@@ -10,7 +10,7 @@ For PDF figure extraction only, install PyMuPDF separately and run `python3 scri
 
 ## Jupyter Notebook
 
-`Analysis.ipynb` runs with the R kernel, so the expression model and plotting code use the same R packages as the R Markdown report. The saved notebook includes its executed outputs and can be read on GitHub without installing Jupyter.
+`Analysis.ipynb` runs with the R kernel for the expression model and plotting code. It uses `knitr` to format HTML tables. The saved notebook includes its executed outputs and can be read on GitHub without installing Jupyter.
 
 To run it locally from the repository root:
 

@@ -120,7 +120,7 @@ From the repository root:
 Rscript scripts/R/04_docking.R
 ```
 
-Or within R / the project R Markdown:
+Or within R or the Jupyter notebook:
 
 ```r
 source("scripts/R/04_docking.R")
