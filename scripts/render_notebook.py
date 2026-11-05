@@ -10,6 +10,7 @@ import sys
 import nbformat
 from nbclient import NotebookClient
 from nbconvert import HTMLExporter
+from nbconvert.filters.highlight import Highlight2HTML
 from PIL import Image
 
 
@@ -50,10 +51,22 @@ def main():
     exporter.mathjax_url = ""
     exporter.require_js_url = ""
     exporter.jquery_url = ""
+    language = notebook.metadata.get("language_info", {})
+    exporter.filters = {"highlight_code": Highlight2HTML(
+        pygments_lexer=language.get("pygments_lexer", language.get("name")),
+        extra_formatter_options={"wrapcode": True},
+    )}
     exporter.raw_template = (
         '{% extends "classic/index.html.j2" %}\n'
         '{% block html_head_js %}{% endblock html_head_js %}\n'
+        '{% block html_head_js_mathjax %}{% endblock html_head_js_mathjax %}\n'
         '{% block notebook_css %}{{ super() }}<style>{{ resources.notebook_css }}</style>{% endblock notebook_css %}\n'
+        '{% block input %}\n'
+        '<div class="inner_cell">\n'
+        '<div class="input_area tex2jax_ignore mathjax_ignore">\n'
+        '{{ cell.source | highlight_code(metadata=cell.metadata) | clean_html }}\n'
+        '</div>\n</div>\n'
+        '{% endblock input %}\n'
     )
     resources = {"metadata": {"name": "Colorectal adenoma-carcinoma progression | Hiu Mai",
                                "path": str(root)},
