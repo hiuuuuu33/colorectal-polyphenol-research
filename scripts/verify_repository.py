@@ -8,7 +8,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / 'metadata/input_checksums.csv'
-IMMUTABLE = ('data', 'archive', 'upstream', 'manuscript', 'figures/submitted', 'figures/original')
+IMMUTABLE = ('data', 'archive', 'upstream', 'figures/submitted', 'figures/original')
 
 
 def sha(path):

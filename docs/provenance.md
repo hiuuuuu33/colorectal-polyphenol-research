@@ -4,7 +4,7 @@
 
 All material was copied into a separate repository. The original research directory was read without moving, renaming, replacing or deleting its files. A complete private source inventory and a before/after checksum comparison are retained outside this repository. The public file manifests use repository-relative paths.
 
-The final manuscript is preserved byte for byte. `metadata/submitted_manuscript.json` records its SHA-256 digest; `metadata/submitted_figures.csv` records the embedded figures extracted from it. `metadata/original_archive_manifest.csv` connects preserved historical scripts, tables, workspaces and figure sources to their original relative paths.
+The manuscript is kept outside this repository. `metadata/submitted_figures.csv` records the embedded figures extracted from it. `metadata/original_archive_manifest.csv` connects preserved historical scripts, tables, workspaces and figure sources to their original relative paths.
 
 ## Original Research Files
 

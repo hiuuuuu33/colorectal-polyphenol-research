@@ -6,7 +6,7 @@ The Jupyter HTML export uses nbconvert. Python can be selected through `PYTHON`.
 
 The default build runs exclusively on included input files and cached source responses. Package installation is a separate step that requires internet access. Figures 1-6 and the archived docking-score summary do not require any remote database queries. The full 1,000-iteration network randomization is an optional new computation and takes longer than the default historical reconstruction.
 
-For PDF figure extraction only, install PyMuPDF separately and run `python3 scripts/extract_submitted_figures.py`. The nine extracted figures are already included in the repository.
+For PDF figure extraction only, install PyMuPDF separately and run `python3 scripts/extract_submitted_figures.py --pdf /path/to/manuscript.pdf` with a local copy of the paper. The nine extracted figures are already included in the repository.
 
 ## Jupyter Notebook
 

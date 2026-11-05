@@ -6,7 +6,7 @@ Hiu Mai
 
 I wanted to understand which gene-expression changes persist as normal colorectal tissue progresses through adenoma to early cancer, and whether those changes could help prioritize polyphenols for further study. I analyzed the three tissue groups, identified genes that changed in the same direction across both transitions, and compared their positions in the human protein interaction network with recorded polyphenol targets.
 
-This repository accompanies my manuscript, *Network-based discovery of bioactive polyphenols based on transcriptomic changes across the colorectal adenoma-carcinoma sequence*. I have included the data, my original analysis files, figures and final manuscript, together with an executable notebook. The notebook follows the analysis one step at a time: a short explanation, the code, then its output.
+This repository accompanies my manuscript, *Network-based discovery of bioactive polyphenols based on transcriptomic changes across the colorectal adenoma-carcinoma sequence*. I have included the data, my original analysis files and figures, together with an executable notebook. The notebook follows the analysis one step at a time: a short explanation, the code, then its output.
 
 ## Research summary
 
@@ -35,13 +35,11 @@ All ten prioritized compounds were docked against both receptor systems. I show 
 
 - [Analysis.ipynb](Analysis.ipynb): the Jupyter notebook, with code and saved outputs.
 - [HTML notebook](https://hiuuuuu33.github.io/colorectal-polyphenol-research/): a browser-readable copy of the analysis.
-- [Final manuscript](manuscript/submitted-manuscript.pdf): my submitted PDF, unchanged.
 - [Figure index](docs/figure-index.md): the inputs and scripts behind each manuscript figure.
 - [Data and code provenance](docs/provenance.md): where the files came from and how I reconstructed the archived analyses.
 
 ```text
 Analysis.ipynb          Jupyter notebook with explanations, code and outputs
-manuscript/             Final PDF and extracted text
 data/                   Expression, enrichment, network, chemical and docking inputs
 scripts/R/              Expression, enrichment, network and docking modules
 scripts/python/         Network analysis and fresh randomization

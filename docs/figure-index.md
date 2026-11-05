@@ -1,6 +1,6 @@
 # Manuscript Figure and Table Index
 
-The reference is the unchanged 29-page `manuscript/submitted-manuscript.pdf`. All nine embedded figures are preserved in `figures/submitted/`.
+The figure and page numbers refer to my submitted manuscript. All nine extracted figures are preserved in `figures/submitted/`.
 
 The [HTML notebook](https://hiuuuuu33.github.io/colorectal-polyphenol-research/) displays the executable code immediately before each figure. Its source is [Analysis.ipynb](../Analysis.ipynb) at the repository root, with executed R cells and embedded PNG outputs.
 

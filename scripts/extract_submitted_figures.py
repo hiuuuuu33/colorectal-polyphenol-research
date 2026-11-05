@@ -1,18 +1,21 @@
-"""Extract manuscript figures and text, recording image checksums and PDF pages."""
+"""Extract figures from a supplied local PDF, recording checksums and page numbers."""
 from pathlib import Path
+import argparse
 import csv
 import hashlib
 import pymupdf
 
 ROOT = Path(__file__).resolve().parents[1]
-PAPER = ROOT / 'manuscript/submitted-manuscript.pdf'
 OUT = ROOT / 'figures/submitted'
 PAGES = {1: 8, 2: 9, 3: 10, 4: 12, 5: 13, 6: 15, 7: 18, 8: 19, 9: 21}
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--pdf', type=Path, required=True, help='Local manuscript PDF')
+    args = parser.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
-    doc = pymupdf.open(PAPER)
+    doc = pymupdf.open(args.pdf)
     rows = []
     for number, page_number in PAGES.items():
         page = doc[page_number - 1]
@@ -30,9 +33,6 @@ def main():
         writer = csv.DictWriter(f, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
-    (ROOT / 'manuscript/submitted-manuscript.txt').write_text(
-        '\n\n'.join(f'PDF PAGE {i + 1}\n{p.get_text()}' for i, p in enumerate(doc)),
-        encoding='utf-8')
     print(f'Extracted {len(rows)} embedded figures without changing the PDF.')
 
 
